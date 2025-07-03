@@ -27,7 +27,9 @@ To get started with the exercises, follow these steps:
   This exercise introduces you to triggering workflows based on GitHub issues. You will modify the "Hello, World!" workflow from exercise 3 to also run when an issue is opened and print the issue title and body to the console. This exercise will also dive into possible security considerations when using context and inputs in workflows.
 - [Exercise 5: Conditions](./exercises/05-conditions/README.md) ([Solution](./solutions/05-conditions/))
   In this exercise, you will learn how to use conditions to control execution of steps. You will modify the "Hello, World!" workflow from exercise 4 so that it doesn't fail when it is not triggered by an issue event. You will also add another trigger (cron) and react to it conditionally.
-- [Exercise 6: Multiple Jobs](./exercises/06-multiple-jobs/README.md) ([Solution](./solutions/06-multiple-jobs/))
+- [Exercise 6: Using Workflow Token](./exercises/06-workflow-token/README.md) ([Solution](./solutions/06-workflow-token/))
+  This exercise introduces you to the workflow token, which is a special token that is automatically created for each workflow run. You will learn how to use the workflow token to authenticate API requests and perform actions on behalf of the workflow. This exercise also introduces the [GitHub CLI](https://cli.github.com/) (`gh`) and shows how to use it in workflows.
+- [Exercise 7: Multiple Jobs](./exercises/07-multiple-jobs/README.md) ([Solution](./solutions/07-multiple-jobs/))
   This exercise introduces you to workflows with multiple jobs. It shows how to run multiple jobs in parallel, how to set dependencies between jobs, and how to use job-level conditions. In addition, we will introduce the matrix strategy as well as job outputs and artifacts to pass data between jobs. This exercise also introduces the first two actions `actions/upload-artifact` and `actions/download-artifact` to handle artifacts.
 
 # Contributing
