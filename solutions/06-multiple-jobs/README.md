@@ -3,7 +3,8 @@
 This directory contains the solution for Exercise 6: Multiple Jobs.
 
 ## Files
-- `multi-job-pipeline.yml` - Complete CI/CD pipeline with multiple jobs
+- `multi-job-pipeline.yml` - Sample multi-job CI/CD pipeline workflow
+- `multi-job-pipeline-with-failures.yml` - Sample multi-job CI/CD pipeline workflow and error simulation
 
 ## Key Features
 - Six-job CI/CD pipeline simulation
