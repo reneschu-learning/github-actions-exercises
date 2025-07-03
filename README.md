@@ -6,7 +6,7 @@ To get started with the exercises, follow these steps:
 
 1. **Clone the Repository**: Use the following command to clone the repository to your local machine:
    ```
-   git clone https://github.com/your-username/github-actions-exercises.git
+   git clone https://github.com/reneschu-learning/github-actions-exercises.git
    ```
 
 2. **Navigate to an Exercise Directory**: Each exercise is located in its own directory. Navigate to the directory of the exercise you want to work on:
