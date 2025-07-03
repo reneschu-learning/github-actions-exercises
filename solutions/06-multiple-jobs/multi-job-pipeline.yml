@@ -1,0 +1,117 @@
+name: Multi-Job CI/CD Pipeline
+
+on:
+  workflow_dispatch:
+
+jobs:
+  setup:
+    runs-on: ubuntu-latest
+    outputs:
+      build-version: ${{ steps.version.outputs.version }}
+      should-deploy: ${{ steps.check.outputs.deploy }}
+    steps:
+      - name: Setup environment
+        run: |
+          echo "Setting up environment..."
+          echo "Node.js version: $(node --version)"
+          echo "npm version: $(npm --version)"
+      
+      - name: Generate version
+        id: version
+        run: |
+          VERSION="1.0.${{ github.run_number }}"
+          echo "version=$VERSION" >> $GITHUB_OUTPUT
+          echo "Generated version: $VERSION"
+      
+      - name: Check deployment conditions
+        id: check
+        run: |
+          if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
+            echo "deploy=true" >> $GITHUB_OUTPUT
+            echo "Deployment: Enabled"
+          else
+            echo "deploy=false" >> $GITHUB_OUTPUT
+            echo "Deployment: Disabled"
+          fi
+
+  tests:
+    needs: setup
+    runs-on: ubuntu-latest
+    steps:
+      - name: Run tests
+        run: |
+          echo "Running tests..."
+          # Simulate test execution
+          sleep 10
+          echo "✅ Tests passed"
+
+  linting:
+    needs: setup
+    strategy:
+      matrix:
+        os: [ ubuntu-latest, windows-latest ]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - name: Run linting
+        run: |
+          echo "Running linting on ${{ matrix.os }}..."
+          # Simulate linting
+          sleep 5
+          echo "✅ Linting passed"
+
+  build:
+    needs: [ setup, tests, linting ]
+    runs-on: ubuntu-latest
+    outputs:
+      artifact-name: ${{ steps.build.outputs.artifact }}
+    steps:
+      - name: Build application
+        id: build
+        run: |
+          echo "Building application version ${{ needs.setup.outputs.build-version }}..."
+          # Simulate build process
+          sleep 20
+          ARTIFACT="app-${{ needs.setup.outputs.build-version }}.tar.gz"
+          touch $ARTIFACT  # Create a dummy artifact file
+          echo "artifact=$ARTIFACT" >> $GITHUB_OUTPUT
+          echo "✅ Build completed: $ARTIFACT"
+      
+      - name: Upload build artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: app
+          path: ${{ steps.build.outputs.artifact }}
+
+  deploy:
+    needs: [ setup, build ]
+    if: needs.setup.outputs.should-deploy == 'true'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Download build artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: app
+
+      - name: Deploy to production
+        run: |
+          echo "Deploying ${{ needs.build.outputs.artifact-name }} to production..."
+          echo "Version: ${{ needs.setup.outputs.build-version }}"
+          ls ${{ github.workspace }} # List downloaded artifact
+          # Simulate deployment
+          sleep 10
+          echo "✅ Deployment completed successfully"
+
+  cleanup:
+    needs: [ setup, tests, linting, build, deploy ]
+    if: always()
+    runs-on: ubuntu-latest
+    steps:
+      - name: Cleanup resources
+        run: |
+          echo "Cleaning up resources..."
+          echo "Setup status: ${{ needs.setup.result }}"
+          echo "Tests status: ${{ needs.tests.result }}"
+          echo "Linting status: ${{ needs.linting.result }}"
+          echo "Build status: ${{ needs.build.result }}"
+          echo "Deploy status: ${{ needs.deploy.result }}"
+          echo "✅ Cleanup completed"

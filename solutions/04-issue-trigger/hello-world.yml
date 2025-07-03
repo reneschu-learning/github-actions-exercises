@@ -1,0 +1,45 @@
+name: Hello World with Issue Trigger
+
+run-name: ${{ github.actor }} triggered this workflow
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Your name for personalized greeting'
+        required: false
+        default: 'World'
+        type: string
+      greeting:
+        description: 'Custom greeting message'
+        required: false
+        default: 'Hello'
+        type: string
+  issues:
+    types: [opened]
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Personalized Greeting
+        run: |
+          echo "$GREETING $NAME!"
+          echo "Triggered by: ${{ github.actor }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Reference: $REF"
+        env:
+          NAME: ${{ github.event.inputs.name }}
+          GREETING: ${{ github.event.inputs.greeting }}
+          REF: ${{ github.ref }}
+      
+      - name: Print Issue Information
+        run: |
+          echo "New issue opened!"
+          echo "Issue #${{ github.event.issue.number }}: $ISSUE_TITLE"
+          echo "Body: $ISSUE_BODY"
+          echo "Opened by: ${{ github.event.issue.user.login }}"
+          echo "Issue URL: ${{ github.event.issue.html_url }}"
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}

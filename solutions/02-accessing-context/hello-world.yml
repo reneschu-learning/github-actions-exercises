@@ -1,0 +1,17 @@
+name: Hello World with Context
+
+run-name: ${{ github.actor }} triggered this workflow
+
+on:
+  workflow_dispatch:
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Hello World with Context
+        run: |
+          echo "Hello, World!"
+          echo "Triggered by: ${{ github.actor }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Reference: ${{ github.ref }}"

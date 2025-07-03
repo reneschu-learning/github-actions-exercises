@@ -1,0 +1,55 @@
+name: Hello World with Conditions
+
+run-name: '${{ (github.event.issue && format(''Issue #{0}'', github.event.issue.number)) || (github.event.schedule && ''Cron'') || github.actor }} triggered this workflow'
+
+on:
+  workflow_dispatch:
+    inputs:
+      name:
+        description: 'Your name for personalized greeting'
+        required: false
+        default: 'World'
+        type: string
+      greeting:
+        description: 'Custom greeting message'
+        required: false
+        default: 'Hello'
+        type: string
+  issues:
+    types: [opened]
+  schedule:
+    - cron: '0 9 * * *'  # Daily at 9:00 AM UTC
+
+jobs:
+  hello:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Print Personalized Greeting
+        if: github.event_name == 'workflow_dispatch'
+        run: |
+          echo "$GREETING $NAME!"
+          echo "Triggered by: ${{ github.actor }}"
+          echo "Repository: ${{ github.repository }}"
+          echo "Reference: $REF"
+        env:
+          NAME: ${{ github.event.inputs.name }}
+          GREETING: ${{ github.event.inputs.greeting }}
+          REF: ${{ github.ref }}
+      
+      - name: Print Issue Information
+        if: github.event_name == 'issues' # or github.event.issue (implicit non-null check)
+        run: |
+          echo "New issue opened!"
+          echo "Issue #${{ github.event.issue.number }}: $ISSUE_TITLE"
+          echo "Body: $ISSUE_BODY"
+          echo "Opened by: ${{ github.event.issue.user.login }}"
+          echo "Issue URL: ${{ github.event.issue.html_url }}"
+        env:
+          ISSUE_TITLE: ${{ github.event.issue.title }}
+          ISSUE_BODY: ${{ github.event.issue.body }}
+      
+      - name: Print Daily Status Check
+        if: github.event_name == 'schedule'
+        run: |
+          echo "Daily status check - All systems operational"
+          echo "Current time: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
