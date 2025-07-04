@@ -1,0 +1,135 @@
+name: Reusable Deployment
+
+on:
+  workflow_call:
+    inputs:
+      environment:
+        required: true
+        type: string
+        description: 'Target environment for deployment'
+      package-name:
+        required: true
+        type: string
+        description: 'Name of the deployment package artifact'
+      app-url:
+        required: true
+        type: string
+        description: 'URL where the application will be deployed'
+      is-production:
+        required: false
+        type: boolean
+        default: false
+        description: 'Whether this is a production deployment'
+    outputs:
+      deployment-status:
+        description: 'Status of the deployment (success/failure)'
+        value: ${{ jobs.deploy.outputs.status }}
+
+jobs:
+  deploy:
+    name: 🚀 Deploy to ${{ inputs.environment }}
+    runs-on: ubuntu-latest
+    environment: 
+      name: ${{ inputs.environment }}
+      url: ${{ inputs.app-url }}
+    outputs:
+      status: ${{ steps.deploy.outputs.status }}
+      version: ${{ steps.get-version.outputs.version }}
+    
+    steps:
+      - name: 📥 Download deployment package
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ inputs.package-name }}
+          path: ./deployment
+      
+      - name: 🔍 Verify package contents
+        run: |
+          echo "📋 Deployment Package Contents:"
+          ls -la ./deployment/
+          echo ""
+          echo "📄 Build Information:"
+          cat ./deployment/build-info.txt
+      
+      - name: 🔧 Setup .NET (Production only)
+        if: inputs.is-production
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: '8.0.x'
+      
+      - name: 🚀 Deploy to ${{ inputs.environment }}
+        id: deploy
+        run: |
+          echo "🌍 Deploying to ${{ inputs.environment }} Environment"
+          echo "Package location: ./deployment/"
+          echo "Target URL: ${{ inputs.app-url }}"
+          
+          # Run production-specific deployment steps
+          if [ "${{ inputs.is-production }}" == "true" ]; then
+            # Simulate deployment by running the application
+            echo "🚀 Running the application..."
+            chmod +x ./deployment/SampleApp
+            ./deployment/SampleApp
+          fi
+          
+          echo "status=success" >> $GITHUB_OUTPUT
+          echo "✅ Deployment completed successfully"
+      
+      - name: 🏷️ Create Release Tag (Production only)
+        if: inputs.is-production
+        run: |
+          echo "Creating release tag for production deployment"
+          echo "Tag: v1.0.${{ github.run_number }}"
+          echo "Commit: ${{ github.sha }}"
+
+          # Use the GitHub REST API to create a tag
+          create_tag_response=$(curl -s -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/git/tags \
+            -d @- <<EOF
+          {
+            "tag": "v1.0.${{ github.run_number }}",
+            "message": "Tag created by deployment",
+            "object": "${{ github.sha }}",
+            "type": "commit",
+            "tagger": {
+              "name": "GitHub Actions",
+              "email": "actions@github.com"
+            },
+            "data": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+          EOF)
+          TAG_SHA=$(echo "$create_tag_response" | grep '"sha":' | head -n 1 | cut -d '"' -f4)
+          echo "Tag object SHA: $TAG_SHA"
+          
+          # Create the tag reference
+          curl -s -L \
+            -X POST \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ github.token }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/git/refs \
+            -o /dev/null \
+            -d @- <<EOF
+          {
+            "ref": "refs/tags/v1.0.${{ github.run_number }}",
+            "sha": "$TAG_SHA"
+          }
+          EOF
+          echo "🏷️ Release tag v1.0.${{ github.run_number }} created successfully"
+      
+      - name: 🔗 Deployment Summary
+        run: |
+          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
+          echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Environment | ${{ inputs.environment }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Version | ${{ steps.get-version.outputs.version }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Branch | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Actor | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Target URL | ${{ inputs.app-url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | ✅ Success |" >> $GITHUB_STEP_SUMMARY
