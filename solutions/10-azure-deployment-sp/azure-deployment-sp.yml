@@ -1,0 +1,126 @@
+name: Azure Deployment with Service Principal
+
+on:
+  workflow_dispatch:
+    inputs:
+      resource-group-name:
+        description: 'Name of the Azure Resource Group'
+        required: true
+      storage-account-name:
+        description: 'Name of the Azure Storage Account'
+        required: true
+      storage-container-name:
+        description: 'Name of the Azure Storage Container'
+        required: true
+
+# Alternative to using secrets/variables for subscription ID
+env:
+  SUBSCRIPTION_ID: ${{ fromJson(secrets.AZURE_CREDENTIALS).subscriptionId }}
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    
+    steps:
+    - name: Login to Azure
+      uses: azure/login@v2
+      with:
+        creds: ${{ secrets.AZURE_CREDENTIALS }}
+    
+    - name: Validate Azure connection
+      run: |
+        echo "🔍 Validating Azure connection..."
+        az account show
+        echo "Subscription ID extracted from created credentials: ${{ env.SUBSCRIPTION_ID }}"
+        echo "✅ Successfully connected to Azure"
+    
+    - name: Create Resource Group
+      run: |
+        echo "🏗️ Creating resource group: ${{ github.event.inputs.resource-group-name }}"
+        
+        az group create \
+          --name ${{ github.event.inputs.resource-group-name }} \
+          --location "West Europe" \
+          --tags environment=github-actions \
+                 createdBy=github-actions \
+                 workflow="${{ github.workflow }}" \
+                 runId="${{ github.run_id }}"
+        
+        echo "✅ Resource group created successfully"
+    
+    - name: Deploy Storage Account
+      run: |
+        echo "💾 Deploying storage account..."
+                
+        # Create storage account
+        az storage account create \
+          --name ${{ github.event.inputs.storage-account-name }} \
+          --resource-group ${{ github.event.inputs.resource-group-name }} \
+          --location "West Europe" \
+          --sku Standard_LRS \
+          --kind StorageV2 \
+          --access-tier Hot \
+          --https-only true \
+          --min-tls-version TLS1_2 \
+          --tags environment=github-actions \
+                 createdBy=github-actions \
+                 workflow="${{ github.workflow }}" \
+                 runId="${{ github.run_id }}"
+        
+        echo "✅ Storage account created successfully"
+    
+    - name: Create Storage Container
+      run: |
+        echo "📁 Creating storage container..."
+        
+        az storage container create \
+          --name ${{ github.event.inputs.storage-container-name }} \
+          --account-name ${{ github.event.inputs.storage-account-name }}
+        
+        echo "✅ Storage container created successfully"
+    
+    - name: Upload sample file
+      run: |
+        echo "📄 Uploading sample file to storage..."
+        
+        # Create a sample file
+        echo "Hello from GitHub Actions! 
+        Deployment Details:
+        - Environment: ${{ github.event.inputs.environment }}
+        - Workflow: ${{ github.workflow }}
+        - Run ID: ${{ github.run_id }}
+        - Timestamp: $(date)
+        " > sample.txt
+        
+        # Upload the file
+        az storage blob upload \
+          --file sample.txt \
+          --name "deployment-info.txt" \
+          --container-name ${{ github.event.inputs.storage-container-name }} \
+          --account-name ${{ github.event.inputs.storage-account-name }}
+        
+        echo "✅ Sample file uploaded successfully"
+    
+    - name: Verify deployment
+      run: |
+        echo "🔍 Verifying deployment..."
+        
+        # Check resource group
+        echo "Resource Group Details:"
+        az group show --name ${{ github.event.inputs.resource-group-name }} --output table
+
+        # Check storage account
+        echo -e "\nStorage Account Details:"
+        az storage account show \
+          --name ${{ github.event.inputs.storage-account-name }} \
+          --resource-group ${{ github.event.inputs.resource-group-name }} \
+          --output table
+        
+        # List blobs in container
+        echo -e "\nFiles in storage container:"
+        az storage blob list \
+          --container-name ${{ github.event.inputs.storage-container-name }} \
+          --account-name ${{ github.event.inputs.storage-account-name }} \
+          --output table
+        
+        echo "✅ Deployment verification completed"

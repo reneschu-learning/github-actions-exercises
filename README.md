@@ -51,7 +51,7 @@ To get started with the exercises, follow these steps:
 - [Exercise 10: Simple Workflow with Azure Deployment (Service Principal)](./exercises/10-azure-deployment-sp/README.md) ([Solution](./solutions/10-azure-deployment-sp/))
   In this exercise, you will create a simple workflow for deploying some resources to Azure using a service principal for authentication. You will learn how to create a service principal, configure it in your workflow, and deploy a few resources (resource group, storage account, storage container) to Azure. This exercise also introduces the `azure/login` action to authenticate with Azure.
 - [Exercise 11: Simple Workflow with Azure Deployment (OIDC)](./exercises/11-azure-deployment-oidc/README.md) ([Solution](./solutions/11-azure-deployment-oidc/))
-  This exercise builds on the previous one by using OIDC authentication to deploy the application to Azure. You will learn how to configure your Azure App Service to trust GitHub Actions and use the `azure/login` action with OIDC authentication. This exercise also introduces the `azure/webapps-deploy` action to deploy the application to Azure App Service.
+  This exercise builds on the previous one by using OIDC authentication to deploy the resources to Azure. You will learn how to configure federated credentials in Azure and use the `azure/login` action with OIDC authentication, which removes the need to store any secrets in your repository.
 
 ## Advanced Exercises
 - [Exercise 12: Reusable Workflows](./exercises/12-reusable-workflows/README.md) ([Solution](./solutions/12-reusable-workflows/))
