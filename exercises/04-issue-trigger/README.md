@@ -1,33 +1,33 @@
-# Exercise 4: Issue Trigger
+# Übung 4: Issue-Trigger
 
-## Objective
-Learn how to trigger workflows based on GitHub issues and understand security considerations when using context and inputs.
+## Ziel
+Lerne, wie du Workflows basierend auf GitHub-Issues auslöst und verstehe die Sicherheitsaspekte beim Umgang mit Kontext und Eingaben.
 
-## Instructions
+## Anleitung
 
-1. **Add issue trigger**: Modify your workflow from Exercise 3 to also trigger when:
-   - An issue is opened in the repository
-   - Keep the manual trigger with inputs from Exercise 3
-     - Make the `name` input optional and default to "World"
-   - Print the issue title
-   - Print the issue body
-   - Print the issue number and URL
-   - Print who opened the issue
+1. **Füge einen Issue-Trigger hinzu**: Erweitere deinen Workflow aus Übung 3, sodass er auch ausgelöst wird, wenn:
+   - Ein Issue im Repository geöffnet wird
+   - Der manuelle Trigger mit Inputs aus Übung 3 bleibt erhalten
+     - Das `name`-Input ist jetzt optional und hat den Standardwert „World“
+   - Der Titel des Issues ausgegeben wird
+   - Der Body des Issues ausgegeben wird
+   - Die Issue-Nummer und URL ausgegeben werden
+   - Angezeigt wird, wer das Issue geöffnet hat
 
-2. **Create a new issue**: After modifying the workflow, create a new issue in the repository to test the issue trigger.
+2. **Erstelle ein neues Issue**: Nachdem du den Workflow angepasst hast, erstelle ein neues Issue im Repository, um den Issue-Trigger zu testen.
 
-## Key Concepts
-- Multiple trigger types in a single workflow
-- Issue events and their types (`opened`, `closed`, `edited`, etc.)
-- Issue context: `github.event.issue`
-- Security considerations with issue content
+## Wichtige Konzepte
+- Mehrere Trigger-Typen in einem Workflow
+- Issue-Events und deren Typen (`opened`, `closed`, `edited`, usw.)
+- Issue-Kontext: `github.event.issue`
+- Sicherheitsaspekte beim Umgang mit Issue-Inhalten
 
-## Expected Output
+## Erwartete Ausgabe
 
-**When triggered by issue:**
+**Wenn durch ein Issue ausgelöst:**
 ```
  !
-Triggered by: [your-username]
+Triggered by: [dein-benutzername]
 Repository: [owner/repo-name]
 Reference: refs/heads/main
 
@@ -38,10 +38,10 @@ Opened by: user123
 Issue URL: https://github.com/owner/repo/issues/5
 ```
 
-**When manually triggered (greeting=Welcome, name=Alice):**
+**Wenn manuell ausgelöst (greeting=Welcome, name=Alice):**
 ```
 Welcome Alice!
-Triggered by: [your-username]
+Triggered by: [dein-benutzername]
 Repository: [owner/repo-name]
 Reference: refs/heads/main
 
@@ -52,19 +52,19 @@ Opened by:
 Issue URL:
 ```
 
-As you can see, depending on the triggering event, either the issue information or the greeting is missing. We will fix this in the next exercise.
+Wie du siehst, fehlt je nach auslösendem Event entweder die Issue-Information oder die Begrüßung. Wir beheben das im nächsten Schritt.
 
-## Security Considerations
-- Issue titles and bodies can contain malicious content
-- Be careful when using issue content in scripts
-- Consider sanitizing or limiting how issue content is used
-- Avoid directly executing issue content as code
+## Sicherheitshinweis
+- Issue-Titel und -Bodies können bösartigen Inhalt enthalten
+- Sei vorsichtig beim Verwenden von Issue-Inhalten in Skripten
+- Ziehe in Betracht, Issue-Inhalte zu bereinigen oder deren Verwendung einzuschränken
+- Vermeide es, Issue-Inhalte direkt als Code auszuführen
 
-## Hints
-- Use multiple triggers: `on: [workflow_dispatch, issues]`
-- Specify issue types: `on.issues.types: [opened]`
-- Access issue data: `github.event.issue.title`, `github.event.issue.body`, etc.
-- Use environment variables or other means of sanitization when referencing potentially unsafe content
+## Hinweise
+- Verwende mehrere Trigger: `on: [workflow_dispatch, issues]`
+- Gib die Issue-Typen an: `on.issues.types: [opened]`
+- Greife auf Issue-Daten zu: `github.event.issue.title`, `github.event.issue.body` usw.
+- Verwende Umgebungsvariablen oder andere Methoden zur Bereinigung bei potenziell unsicheren Inhalten
 
-## Solution
-If you get stuck, check the [solution](../../solutions/04-issue-trigger/) directory for a working example.
+## Lösung
+Wenn du nicht weiterkommst, sieh im [solution](../../solutions/04-issue-trigger/) Verzeichnis nach einem funktionierenden Beispiel nach.

@@ -1,41 +1,41 @@
-# Exercise 2: Accessing Context
+# Übung 2: Zugriff auf Kontext
 
-## Objective
-Learn how to access GitHub context information in your workflows and display information about the actor who triggered the workflow.
+## Ziel
+Lerne, wie du GitHub-Kontextinformationen in deinen Workflows abrufst und Informationen über den Akteur anzeigst, der den Workflow ausgelöst hat.
 
-## Instructions
+## Anleitung
 
-1. **Modify the Hello World workflow**: Starting from Exercise 1, modify your workflow to:
-   - Print "Hello, World!" as before
-   - Add a `run-name` that shows who triggered the workflow
-   - Print the username of the person who triggered the workflow
-   - Print the repository name
-   - Print the current branch or reference
+1. **Modifiziere den Hello World Workflow**: Baue auf Übung 1 auf und passe deinen Workflow an, sodass:
+   - „Hello, World!“ wie zuvor ausgegeben wird
+   - Ein `run-name` angezeigt wird, der zeigt, wer den Workflow ausgelöst hat
+   - Der Benutzername der Person ausgegeben wird, die den Workflow ausgelöst hat
+   - Der Name des Repositories ausgegeben wird
+   - Der aktuelle Branch oder die Referenz ausgegeben wird
 
-2. **Use GitHub context**: Use the `github` context object to access:
-   - `github.actor` - the username of the person who triggered the workflow
-   - `github.repository` - the repository name in format "owner/repo"
-   - `github.ref` - the git reference (branch/tag) that triggered the workflow
+2. **Verwende GitHub-Kontext**: Nutze das `github` Kontextobjekt, um auf folgende Werte zuzugreifen:
+   - `github.actor` – der Benutzername der Person, die den Workflow ausgelöst hat
+   - `github.repository` – der Repository-Name im Format „owner/repo“
+   - `github.ref` – die Git-Referenz (Branch/Tag), die den Workflow ausgelöst hat
 
-3. **Test the workflow**: Trigger the workflow manually and observe the context information
+3. **Teste den Workflow**: Löse den Workflow manuell aus und beobachte die Kontextinformationen
 
-## Key Concepts
-- GitHub context object (`github`)
-- Accessing context variables using `${{ github.property }}`
-- Common context properties: `actor`, `repository`, `ref`
+## Wichtige Konzepte
+- GitHub Kontextobjekt (`github`)
+- Zugriff auf Kontextvariablen mit `${{ github.property }}`
+- Häufige Kontext-Properties: `actor`, `repository`, `ref`
 
-## Expected Output
+## Erwartete Ausgabe
 ```
 Hello, World!
-Triggered by: [your-username]
+Triggered by: [dein-benutzername]
 Repository: [owner/repo-name]
 Reference: refs/heads/main
 ```
 
-## Hints
-- Context variables are accessed using the `${{ }}` syntax
-- You can use multiple `echo` commands or combine them in a single step
-- The `github` context is automatically available in all workflows
+## Hinweise
+- Kontextvariablen werden mit der `${{ }}`-Syntax abgerufen
+- Du kannst mehrere `echo`-Befehle verwenden oder sie in einem Schritt kombinieren
+- Das `github` Kontextobjekt ist in allen Workflows automatisch verfügbar
 
-## Solution
-If you get stuck, check the [solution](../../solutions/02-accessing-context/) directory for a working example.
+## Lösung
+Wenn du nicht weiterkommst, sieh im [solution](../../solutions/02-accessing-context/) Verzeichnis nach einem funktionierenden Beispiel nach.

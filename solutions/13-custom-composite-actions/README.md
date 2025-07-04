@@ -1,43 +1,43 @@
-# Exercise 13 Solution: Custom Composite Actions
+# Lösung: Übung 13 – Eigene Composite Actions
 
-## Overview
-This solution demonstrates how to create a custom composite action that encapsulates the release tagging functionality from Exercise 12. The composite action provides a reusable way to create Git tags with proper error handling and outputs.
+## Überblick
+Diese Lösung zeigt, wie man eine eigene Composite Action erstellt, die die Tagging-Funktionalität aus Übung 12 kapselt. Die Composite Action bietet eine wiederverwendbare Möglichkeit, Git-Tags mit Fehlerbehandlung und Outputs zu erstellen.
 
-## Files Created
+## Erstellte Dateien
 
 ### 1. Composite Action (`.github/actions/create-release-tag/action.yml`)
-The main composite action that handles tag creation with:
-- Input validation
-- GitHub API integration
-- Error handling
-- Structured outputs
+Die Haupt-Composite Action für das Tagging mit:
+- Input-Validierung
+- GitHub API-Integration
+- Fehlerbehandlung
+- Strukturierte Outputs
 
-### 2. Updated Reusable Workflow (`reusable-deploy.yml`)
-Modified version of the reusable workflow from Exercise 12 that uses the new composite action instead of inline tagging steps.
+### 2. Aktualisierter wiederverwendbarer Workflow (`reusable-deploy.yml`)
+Angepasste Version des Workflows aus Übung 12, die die neue Composite Action statt Inline-Tagging verwendet.
 
-### 3. Test Workflow (`test-composite-action.yml`)
-A standalone workflow to test the composite action independently, demonstrating how to use it in different contexts.
+### 3. Test-Workflow (`test-composite-action.yml`)
+Eigenständiger Workflow zum Testen der Composite Action, der zeigt, wie sie in verschiedenen Kontexten genutzt werden kann.
 
-## Key Features
+## Wichtige Features
 
 ### Composite Action Features
-- **Input Validation**: Ensures required inputs are provided
-- **Flexible Tag Naming**: Supports custom tag names and messages
-- **Error Handling**: Provides meaningful error messages
-- **Structured Outputs**: Returns tag SHA and URL for further use
-- **API Integration**: Uses GitHub REST API for tag creation
+- **Input-Validierung**: Stellt sicher, dass erforderliche Inputs gesetzt sind
+- **Flexibles Tagging**: Unterstützt eigene Tag-Namen und Nachrichten
+- **Fehlerbehandlung**: Liefert aussagekräftige Fehlermeldungen
+- **Strukturierte Outputs**: Gibt Tag-SHA und URL zurück
+- **API-Integration**: Nutzt die GitHub REST API für das Tagging
 
-### Benefits Demonstrated
-- **Code Reusability**: Tag creation logic can be used in multiple workflows
-- **Maintainability**: Changes to tagging logic only need to be made in one place
-- **Testability**: Composite action can be tested independently
-- **Clarity**: Workflow steps are more readable and focused
+### Vorteile
+- **Wiederverwendbarkeit**: Tagging-Logik kann in mehreren Workflows genutzt werden
+- **Wartbarkeit**: Änderungen an der Tagging-Logik nur an einer Stelle nötig
+- **Testbarkeit**: Composite Action kann unabhängig getestet werden
+- **Klarheit**: Workflow-Schritte sind übersichtlicher
 
-## Usage Examples
+## Anwendungsbeispiele
 
-### In a Workflow
+### Im Workflow
 ```yaml
-- name: Create Release Tag
+- name: Release-Tag erstellen
   uses: ./.github/actions/create-release-tag
   with:
     tag-name: 'v1.0.0'
@@ -46,9 +46,9 @@ A standalone workflow to test the composite action independently, demonstrating 
     github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-### With Dynamic Tag Names
+### Mit dynamischen Tag-Namen
 ```yaml
-- name: Create Release Tag
+- name: Release-Tag erstellen
   uses: ./.github/actions/create-release-tag
   with:
     tag-name: 'v1.0.${{ github.run_number }}'
@@ -56,23 +56,22 @@ A standalone workflow to test the composite action independently, demonstrating 
     github-token: ${{ secrets.GITHUB_TOKEN }}
 ```
 
-## Testing
-The solution includes comprehensive testing through:
-1. Manual testing via the test workflow
-2. Integration testing via the updated reusable workflow
-3. Error condition testing with invalid inputs
+## Testen
+Die Lösung enthält umfassende Tests durch:
+1. Manuellen Test über den Test-Workflow
+2. Integrationstest über den aktualisierten wiederverwendbaren Workflow
+3. Fehlerfall-Tests mit ungültigen Inputs
 
-## Extension Ideas
-This composite action could be extended with:
-- Support for pre-release tags
-- Integration with release notes generation
-- Support for different tag formats
-- Notification capabilities
-- Rollback functionality
+## Erweiterungsideen
+- Unterstützung für Pre-Release-Tags
+- Integration mit Release Notes
+- Unterstützung verschiedener Tag-Formate
+- Benachrichtigungsfunktionen
+- Rollback-Funktionalität
 
-## Best Practices Demonstrated
-- Clear input/output definitions
-- Comprehensive error handling
-- Meaningful log messages
-- Secure token handling
-- Modular design principles
+## Best Practices
+- Klare Input/Output-Definitionen
+- Umfassende Fehlerbehandlung
+- Aussagekräftige Log-Meldungen
+- Sicherer Umgang mit Tokens
+- Modulares Design

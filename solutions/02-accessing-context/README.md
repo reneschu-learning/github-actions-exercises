@@ -1,29 +1,29 @@
-# Solution: Accessing Context
+# Lösung: Zugriff auf Kontext
 
-This directory contains the solution for Exercise 2: Accessing Context.
+Dieses Verzeichnis enthält die Lösung für Übung 2: Zugriff auf Kontext.
 
-## Files
-- `hello-world.yml` - The GitHub Actions workflow file with context access
+## Dateien
+- `hello-world.yml` – Die GitHub Actions Workflow-Datei mit Kontextzugriff
 
-## Key Features
-- Manual trigger using `workflow_dispatch`
-- Accesses GitHub context information
-- Displays actor, repository, and reference information
-- Uses multi-line run commands
+## Wichtige Merkmale
+- Manueller Auslöser mit `workflow_dispatch`
+- Zugriff auf GitHub-Kontextinformationen
+- Zeigt Akteur, Repository und Referenzinformationen an
+- Verwendet mehrzeilige run-Befehle
 
-## Context Variables Used
-- `github.actor` - Username who triggered the workflow
-- `github.repository` - Repository name in owner/repo format
-- `github.ref` - Git reference (branch/tag)
+## Verwendete Kontextvariablen
+- `github.actor` – Benutzername, der den Workflow ausgelöst hat
+- `github.repository` – Repository-Name im owner/repo-Format
+- `github.ref` – Git-Referenz (Branch/Tag)
 
-## Usage
-1. Copy the workflow file to `.github/workflows/` in your repository
-2. Commit and push the changes
-3. Manually trigger the workflow
-4. Observe the context information in the logs
+## Verwendung
+1. Kopiere die Workflow-Datei nach `.github/workflows/` in deinem Repository
+2. Committe und pushe die Änderungen
+3. Löse den Workflow manuell aus
+4. Beobachte die Kontextinformationen in den Logs
 
-## What You'll Learn
-- GitHub context object
-- Accessing context variables with `${{ }}`
-- Multi-line shell commands with `|`
-- Common context properties
+## Was du lernst
+- GitHub Kontextobjekt
+- Zugriff auf Kontextvariablen mit `${{ }}`
+- Mehrzeilige Shell-Befehle mit `|`
+- Häufige Kontext-Properties

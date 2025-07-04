@@ -1,49 +1,49 @@
-# Exercise 6: Using Workflow Token
+# Übung 6: Verwendung des Workflow-Tokens
 
-## Objective
-Learn how to use the automatically generated workflow token (`GITHUB_TOKEN`) to authenticate API requests and interact with your repository using the GitHub CLI.
+## Ziel
+Lerne, wie du das automatisch generierte Workflow-Token (`GITHUB_TOKEN`) verwendest, um API-Anfragen zu authentifizieren und mit deinem Repository über die GitHub CLI zu interagieren.
 
-## Instructions
+## Anleitung
 
-1. **Add GitHub CLI usage**: Modify your workflow from Exercise 5 to include steps that use the GitHub CLI (`gh`):
-   - Add a step that creates a comment on an issue when the workflow is triggered by an issue event
-   - Add a step that retrieves repository information when manually triggered
-   - Add a step that lists recent workflow runs when triggered by schedule
+1. **Verwende die GitHub CLI**: Erweitere deinen Workflow aus Übung 5 um Schritte, die die GitHub CLI (`gh`) nutzen:
+   - Füge einen Schritt hinzu, der einen Kommentar zu einem Issue erstellt, wenn der Workflow durch ein Issue-Event ausgelöst wird
+   - Füge einen Schritt hinzu, der Repository-Informationen abruft, wenn der Workflow manuell ausgelöst wird
+   - Füge einen Schritt hinzu, der die letzten Workflow-Läufe auflistet, wenn der Workflow durch den Zeitplan ausgelöst wird
 
-2. **Token Authentication**: Learn to use the `GITHUB_TOKEN`:
-   - Use the token to authenticate GitHub CLI commands
-   - Understand the default permissions of the workflow token
-   - Practice reading repository data and writing comments
+2. **Token-Authentifizierung**: Lerne, das `GITHUB_TOKEN` zu verwenden:
+   - Nutze das Token, um GitHub CLI-Befehle zu authentifizieren
+   - Verstehe die Standardberechtigungen des Workflow-Tokens
+   - Übe das Lesen von Repository-Daten und das Schreiben von Kommentaren
 
-3. **Security Considerations**: 
-   - Understand what permissions the workflow token has by default
-   - Learn when and why you might need to request additional permissions
+3. **Sicherheitsaspekte**:
+   - Verstehe, welche Berechtigungen das Workflow-Token standardmäßig hat
+   - Lerne, wann und warum du zusätzliche Berechtigungen anfordern solltest
 
-## Key Concepts
-- `GITHUB_TOKEN` secret and its automatic creation
-- GitHub CLI (`gh`) tool and its integration with workflows
-- Token permissions and security boundaries
-- API authentication in workflows
-- Conditional execution based on trigger types
+## Wichtige Konzepte
+- `GITHUB_TOKEN` Secret und dessen automatische Erstellung
+- GitHub CLI (`gh`) Tool und Integration in Workflows
+- Token-Berechtigungen und Sicherheitsgrenzen
+- API-Authentifizierung in Workflows
+- Bedingte Ausführung je nach Trigger-Typ
 
-## Expected Output
+## Erwartete Ausgabe
 
-**When manually triggered:**
+**Bei manuellem Trigger:**
 ```
 Hello Alice!
-Triggered by: [your-username]
+Triggered by: [dein-benutzername]
 Repository: [owner/repo-name]
 Reference: refs/heads/main
 
 Repository Information:
 Name: my-repo
-Owner: my-username  
+Owner: my-username
 Description: A sample repository
 Private: false
 Default branch: main
 ```
 
-**When triggered by issue:**
+**Bei Issue-Trigger:**
 ```
 New issue opened!
 Issue #5: Bug in login functionality
@@ -51,34 +51,34 @@ Body: When I try to log in with my credentials...
 Opened by: user123
 Issue URL: https://github.com/owner/repo/issues/5
 
-✓ Comment added to issue #5
+✓ Kommentar zu Issue #5 hinzugefügt
 ```
 
-**When triggered by schedule:**
+**Bei Zeitplan-Trigger:**
 ```
 Daily status check - All systems operational
 Current time: 2024-01-15T09:00:00Z
 
-Recent workflow runs:
+Letzte Workflow-Läufe:
 ✓ Hello World with Conditions - main (completed)
-✓ Hello World with Conditions - main (completed)  
+✓ Hello World with Conditions - main (completed)
 ⏳ Hello World with Conditions - main (in_progress)
 ```
 
-## GitHub CLI Commands to Use
-- `gh repo view` - Get repository information
-- `gh issue comment` - Add comment to an issue
-- `gh run list` - List workflow runs
+## GitHub CLI-Befehle, die verwendet werden
+- `gh repo view` – Repository-Informationen abrufen
+- `gh issue comment` – Kommentar zu einem Issue hinzufügen
+- `gh run list` – Workflow-Läufe auflisten
 
-## Security Notes
-- The `GITHUB_TOKEN` is automatically available in all workflow runs
-- It has read permissions to the repository content and packages by default
-- It cannot access other repositories or perform admin actions
-- Token permissions can be extended using the `permissions` key in workflows
+## Sicherheitshinweise
+- Das `GITHUB_TOKEN` ist in allen Workflow-Läufen automatisch verfügbar
+- Es hat standardmäßig Leserechte für Repository-Inhalte und Pakete
+- Es kann nicht auf andere Repositories zugreifen oder Admin-Aktionen ausführen
+- Die Token-Berechtigungen können mit dem `permissions`-Schlüssel im Workflow erweitert werden
 
-## Hints
-- The GitHub CLI is pre-installed on GitHub-hosted runners
-- Use `gh auth status` to verify authentication
-- Environment variables can be passed to `gh` commands
-- The token is available as `${{ secrets.GITHUB_TOKEN }}`
-- Use conditional steps based on `github.event_name` to control when each step runs
+## Hinweise
+- Die GitHub CLI ist auf GitHub-gehosteten Runnern vorinstalliert
+- Mit `gh auth status` kannst du die Authentifizierung prüfen
+- Umgebungsvariablen können an `gh`-Befehle übergeben werden
+- Das Token ist verfügbar als `${{ secrets.GITHUB_TOKEN }}`
+- Verwende bedingte Schritte basierend auf `github.event_name`, um zu steuern, wann welcher Schritt ausgeführt wird

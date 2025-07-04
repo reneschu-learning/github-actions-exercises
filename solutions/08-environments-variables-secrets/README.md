@@ -1,72 +1,72 @@
-# Solution: Exercise 8 - Environments, Variables, and Secrets
+# Lösung: Übung 8 – Environments, Variablen und Secrets
 
-This solution demonstrates how to use environments, variables, and secrets in GitHub Actions workflows.
+Diese Lösung zeigt, wie man Environments, Variablen und Secrets in GitHub Actions Workflows verwendet.
 
-## Files
-- `environments-variables-secrets.yml`: The main workflow file
+## Dateien
+- `environments-variables-secrets.yml`: Die Haupt-Workflow-Datei
 
-## Key Features
+## Wichtige Merkmale
 
-### 1. Workflow Inputs
-- Uses `workflow_dispatch` trigger with two inputs
-- `environment`: Choice input for selecting target environment
-- `deploy_version`: String input for specifying deployment version
+### 1. Workflow-Inputs
+- Verwendet den `workflow_dispatch` Trigger mit zwei Inputs
+- `environment`: Auswahlfeld für das Ziel-Environment
+- `deploy_version`: String-Input für die Deployment-Version
 
-### 2. Environment Usage
-- The job uses the environment specified in the input: `environment: ${{ inputs.environment }}`
-- This allows the workflow to access environment-specific variables and secrets
+### 2. Verwendung von Environments
+- Der Job verwendet das im Input angegebene Environment: `environment: ${{ inputs.environment }}`
+- Dadurch kann der Workflow auf environment-spezifische Variablen und Secrets zugreifen
 
-### 3. Variables Demonstration
-- Shows how to access repository variables: `${{ vars.VARIABLE_NAME }}`
-- Shows how to access environment variables (same syntax, but environment takes precedence)
-- Demonstrates variable precedence (environment overrides repository)
-- Shows how to define local variables within the workflow using `env` and access them with `${{ env.VARIABLE_NAME }}`
-  - **Note:** Local variables are not exposed to the job environment, but can be used within the workflow steps. Thus, you cannot use local variables to set inputs of reusable workflows.  
+### 3. Variablen-Demonstration
+- Zeigt, wie man Repository-Variablen abruft: `${{ vars.VARIABLE_NAME }}`
+- Zeigt, wie man Umgebungsvariablen abruft (gleiche Syntax, aber Environment überschreibt Repository)
+- Demonstriert die Priorität von Variablen (Environment überschreibt Repository)
+- Zeigt, wie man lokale Variablen im Workflow mit `env` definiert und mit `${{ env.VARIABLE_NAME }}` abruft
+  - **Hinweis:** Lokale Variablen sind nicht im Job-Environment verfügbar, sondern nur innerhalb der Workflow-Schritte. Sie können nicht als Inputs für wiederverwendbare Workflows verwendet werden.
 
-### 4. Secrets Usage
-- Safely demonstrates secret usage without exposing values
-- Shows that secret values are automatically masked in logs
-- Uses conditional checking to verify secrets exist: `${{ secrets.SECRET_NAME != '' }}`
+### 4. Verwendung von Secrets
+- Zeigt, wie man Secrets sicher verwendet, ohne Werte preiszugeben
+- Secret-Werte werden automatisch in Logs maskiert
+- Verwendet bedingte Prüfung, um zu prüfen, ob ein Secret existiert: `${{ secrets.SECRET_NAME != '' }}`
 
-## Setup Instructions
+## Setup-Anleitung
 
-### Repository Variables
-Create these in **Settings > Secrets and variables > Actions > Variables**:
+### Repository-Variablen
+Lege diese unter **Settings > Secrets and variables > Actions > Variables** an:
 - `APP_NAME`: `my-awesome-app`
 - `DEFAULT_REGION`: `us-east-1`
 
 ### Environments
-Create these in **Settings > Environments**:
+Lege diese unter **Settings > Environments** an:
 
 #### Development Environment
-- Environment variables:
+- Umgebungsvariablen:
   - `ENVIRONMENT_NAME`: `dev`
   - `API_URL`: `https://dev-api.example.com`
-- Environment secrets:
+- Environment-Secrets:
   - `DATABASE_PASSWORD`: `dev-password-123`
 
 #### Production Environment
-- Environment variables:
+- Umgebungsvariablen:
   - `ENVIRONMENT_NAME`: `prod`
   - `API_URL`: `https://api.example.com`
-- Environment secrets:
+- Environment-Secrets:
   - `DATABASE_PASSWORD`: `prod-password-xyz`
-- Protection rules:
-  - Required reviewers
-  - Wait timer: 5 minutes
+- Schutzregeln:
+  - Erforderliche Reviewer
+  - Wartezeit: 5 Minuten
 
-### Repository Secrets
-Create these in **Settings > Secrets and variables > Actions > Secrets**:
+### Repository-Secrets
+Lege diese unter **Settings > Secrets and variables > Actions > Secrets** an:
 - `API_KEY`: `super-secret-api-key-12345`
 
-## Testing
-1. Run the workflow with the `development` environment - should execute immediately
-2. Run the workflow with the `production` environment - should require approval and wait timer
-3. Compare the output to see how environment variables override repository variables
+## Testen
+1. Starte den Workflow mit dem Environment `development` – sollte sofort ausgeführt werden
+2. Starte den Workflow mit dem Environment `production` – benötigt Freigabe und Wartezeit
+3. Vergleiche die Ausgabe, um zu sehen, wie Umgebungsvariablen Repository-Variablen überschreiben
 
-## Security Best Practices Demonstrated
-- Secrets are automatically masked in logs
-  - **Note:** Keep in mind that masking secrets just provides best-effort protection. Secrets can still be exposed through artifacts, as transformed values in logs, or through other means. If possible, avoid using secrets in your workflows. E.g., [exercise 11](./exercises/11-full-ci-cd-pipeline-azure-deployment-oidc/README.md) demonstrates how to use OIDC authentication to avoid using secrets when connecting to Azure.
-- Environment protection rules prevent unauthorized production deployments
-- Separation of configuration between environments
-- Safe handling of sensitive information
+## Sicherheits-Best-Practices
+- Secrets werden automatisch in Logs maskiert
+  - **Hinweis:** Das Maskieren von Secrets bietet nur bestmöglichen Schutz. Secrets können trotzdem über Artefakte, transformierte Werte in Logs oder andere Wege offengelegt werden. Wenn möglich, vermeide die Verwendung von Secrets in Workflows. Beispiel: [Übung 11](./exercises/11-full-ci-cd-pipeline-azure-deployment-oidc/README.md) zeigt, wie man OIDC-Authentifizierung nutzt, um beim Azure-Login keine Secrets zu verwenden.
+- Environment-Schutzregeln verhindern unautorisierte Production-Deployments
+- Trennung der Konfiguration zwischen Environments
+- Sicherer Umgang mit sensiblen Informationen

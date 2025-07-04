@@ -1,52 +1,52 @@
-# Solution: Using Workflow Token
+# Lösung: Verwendung des Workflow-Tokens
 
-This directory contains the solution for Exercise 6: Using Workflow Token.
+Dieses Verzeichnis enthält die Lösung für Übung 6: Verwendung des Workflow-Tokens.
 
-## Files
-- `hello-world.yml` - The GitHub Actions workflow file with GitHub CLI integration
+## Dateien
+- `hello-world.yml` – Die GitHub Actions Workflow-Datei mit GitHub CLI-Integration
 
-## Key Features
-- Utilizes `GITHUB_TOKEN` for authentication
-- GitHub CLI (`gh`) integration for API interactions
-- Repository information retrieval
-- Issue commenting functionality
-- Workflow run listing
-- Conditional execution based on trigger types
+## Wichtige Merkmale
+- Verwendet `GITHUB_TOKEN` zur Authentifizierung
+- GitHub CLI (`gh`) Integration für API-Interaktionen
+- Abruf von Repository-Informationen
+- Kommentarfunktion für Issues
+- Auflistung von Workflow-Läufen
+- Bedingte Ausführung je nach Trigger-Typ
 
-## Triggers
-- `workflow_dispatch` - Manual trigger with inputs
-- `issues` (opened) - Issue creation trigger  
-- `schedule` - Daily at 9:00 AM UTC
+## Trigger
+- `workflow_dispatch` – Manueller Trigger mit Inputs
+- `issues` (opened) – Trigger bei Issue-Erstellung
+- `schedule` – Täglich um 9:00 Uhr UTC
 
-## GitHub CLI Commands Used
-- `gh auth status` - Verify GitHub CLI authentication
-- `gh repo view` - Display repository information
-- `gh issue comment` - Add comments to issues
-- `gh run list` - List recent workflow runs
+## Verwendete GitHub CLI-Befehle
+- `gh auth status` – Authentifizierung der GitHub CLI prüfen
+- `gh repo view` – Repository-Informationen anzeigen
+- `gh issue comment` – Kommentare zu Issues hinzufügen
+- `gh run list` – Letzte Workflow-Läufe auflisten
 
-## Token Permissions
-The workflow extends the default permissions of the `GITHUB_TOKEN` and requires:
-- Read access to repository contents
-- Write access to issues
-- Read access to actions
+## Token-Berechtigungen
+Der Workflow erweitert die Standardberechtigungen des `GITHUB_TOKEN` und benötigt:
+- Leserechte für Repository-Inhalte
+- Schreibrechte für Issues
+- Leserechte für Actions
 
-## Advanced Concepts
-- Environment variable usage with GitHub CLI
-- Token authentication patterns
-- Conditional step execution
-- Error handling with CLI commands
-- JSON output parsing
+## Erweiterte Konzepte
+- Verwendung von Umgebungsvariablen mit der GitHub CLI
+- Token-Authentifizierungsmuster
+- Bedingte Ausführung von Schritten
+- Fehlerbehandlung bei CLI-Befehlen
+- Parsen von JSON-Ausgaben
 
-## Usage
-1. Copy the workflow file to `.github/workflows/` in your repository
-2. Commit and push the changes
-3. Test all three trigger types:
-   - Manual execution to see repository info
-   - Create an issue to see automated commenting
-   - Wait for scheduled run to see workflow history
+## Verwendung
+1. Kopiere die Workflow-Datei nach `.github/workflows/` in deinem Repository
+2. Committe und pushe die Änderungen
+3. Teste alle drei Trigger-Typen:
+   - Manuelle Ausführung für Repository-Infos
+   - Erstelle ein Issue für automatisierte Kommentare
+   - Warte auf den Zeitplan für die Workflow-Historie
 
-## Security Best Practices
-- Always use the provided `GITHUB_TOKEN` instead of personal access tokens when possible
-- Understand the principle of least privilege
-- Be cautious when using tokens in public repositories
-- Consider using `permissions` key to extend/restrict token scope explicitly if needed
+## Sicherheitsbest Practices
+- Verwende immer das bereitgestellte `GITHUB_TOKEN` statt persönlicher Zugriffstokens, wenn möglich
+- Beachte das Prinzip der minimalen Rechtevergabe
+- Sei vorsichtig beim Einsatz von Tokens in öffentlichen Repositories
+- Nutze den `permissions`-Schlüssel, um den Token-Umfang explizit zu erweitern oder einzuschränken, falls nötig

@@ -1,31 +1,31 @@
-# Solution: Trigger Inputs
+# Lösung: Trigger-Inputs
 
-This directory contains the solution for Exercise 3: Trigger Inputs.
+Dieses Verzeichnis enthält die Lösung für Übung 3: Trigger-Inputs.
 
-## Files
-- `hello-world.yml` - The GitHub Actions workflow file with input handling
+## Dateien
+- `hello-world.yml` – Die GitHub Actions Workflow-Datei mit Input-Verarbeitung
 
-## Key Features
-- Manual trigger with custom inputs
-- Required and optional input parameters
-- Default values for optional inputs
-- Personalized greeting using inputs
-- Context information display
+## Wichtige Merkmale
+- Manueller Auslöser mit benutzerdefinierten Inputs
+- Erforderliche und optionale Eingabeparameter
+- Standardwerte für optionale Inputs
+- Personalisierte Begrüßung mit den Inputs
+- Anzeige der Kontextinformationen
 
-## Input Parameters
-- `name` (required) - User's name for personalized greeting
-- `greeting` (optional) - Custom greeting message, defaults to "Hello"
+## Eingabeparameter
+- `name` (erforderlich) – Name des Benutzers für die personalisierte Begrüßung
+- `greeting` (optional) – Benutzerdefinierte Begrüßungsnachricht, Standard ist „Hello“
 
-## Usage
-1. Copy the workflow file to `.github/workflows/` in your repository
-2. Commit and push the changes
-3. Go to Actions tab and run the workflow
-4. Fill in the input fields when prompted
-5. Try different combinations of inputs
+## Verwendung
+1. Kopiere die Workflow-Datei nach `.github/workflows/` in deinem Repository
+2. Committe und pushe die Änderungen
+3. Gehe zum Actions-Tab und führe den Workflow aus
+4. Fülle die Eingabefelder aus, wenn du dazu aufgefordert wirst
+5. Probiere verschiedene Kombinationen von Eingaben aus
 
-## What You'll Learn
-- Workflow input definitions
-- Required vs optional inputs
-- Default values
-- Accessing inputs via `github.event.inputs`
-- Input types and validation
+## Was du lernst
+- Definition von Workflow-Inputs
+- Erforderliche vs. optionale Inputs
+- Standardwerte
+- Zugriff auf Inputs über `github.event.inputs`
+- Input-Typen und Validierung

@@ -1,56 +1,56 @@
-# Exercise 12: Reusable Workflows
+# Übung 12: Wiederverwendbare Workflows
 
-## Objective
-In this exercise, you will learn how to create reusable workflows that can be called from other workflows. You will refactor the CI/CD pipeline from Exercise 9 to reduce duplication by extracting the deployment jobs into separate reusable workflows.
+## Ziel
+In dieser Übung lernst du, wie du wiederverwendbare Workflows erstellst, die von anderen Workflows aufgerufen werden können. Du refaktorierst die CI/CD-Pipeline aus Übung 9, um Duplikate zu vermeiden, indem du die Deployment-Jobs in wiederverwendbare Workflows auslagerst.
 
-## Background
-Reusable workflows allow you to eliminate duplication and make your workflows more maintainable. Instead of copying and pasting similar job definitions across multiple workflows, you can define a workflow once and call it from multiple places with different inputs.
+## Hintergrund
+Wiederverwendbare Workflows helfen, Duplikate zu vermeiden und machen deine Workflows wartbarer. Statt ähnliche Job-Definitionen zu kopieren, definierst du einen Workflow einmal und rufst ihn an mehreren Stellen mit unterschiedlichen Eingaben auf.
 
-Key benefits of reusable workflows:
-- **Reduced duplication**: Write once, use many times
-- **Easier maintenance**: Update logic in one place
-- **Consistency**: Ensure all workflows use the same deployment process
-- **Better organization**: Separate concerns into focused workflows
+Vorteile wiederverwendbarer Workflows:
+- **Weniger Duplikate**: Einmal schreiben, mehrfach nutzen
+- **Leichtere Wartung**: Änderungen an einer Stelle
+- **Konsistenz**: Alle Workflows nutzen denselben Deployment-Prozess
+- **Bessere Organisation**: Trennung der Verantwortlichkeiten
 
-## What You'll Learn
-- How to create reusable workflows with inputs and outputs
-- How to call reusable workflows from other workflows
-- How to pass data between the caller and reusable workflows
-- Best practices for organizing reusable workflows
+## Was du lernst
+- Wie man wiederverwendbare Workflows mit Inputs und Outputs erstellt
+- Wie man wiederverwendbare Workflows aus anderen Workflows aufruft
+- Wie man Daten zwischen aufrufendem und wiederverwendbarem Workflow übergibt
+- Best Practices für die Organisation wiederverwendbarer Workflows
 
-## Instructions
+## Anleitung
 
-### Step 1: Create Reusable Deployment Workflow
-Create a new workflow file at `.github/workflows/reusable-deploy.yml` that contains a reusable workflow for deployments. This workflow should:
+### Schritt 1: Wiederverwendbaren Deployment-Workflow erstellen
+Lege eine neue Workflow-Datei unter `.github/workflows/reusable-deploy.yml` an. Dieser Workflow soll:
 
-1. Accept the following inputs:
-   - `environment`: The target environment (development/production)
-   - `package-name`: The name of the artifact package to deploy
-   - `app-url`: The URL where the application will be deployed
+1. Folgende Inputs akzeptieren:
+   - `environment`: Ziel-Environment (development/production)
+   - `package-name`: Name des zu deployenden Artefakts
+   - `app-url`: URL, unter der die Anwendung bereitgestellt wird
 
-2. Include the following outputs:
-   - `deployment-status`: Whether the deployment was successful
+2. Folgende Outputs bereitstellen:
+   - `deployment-status`: Ob das Deployment erfolgreich war
 
-3. Extract the deployment logic from the original workflow (download package, deploy, create summary). Ensure that you properly handle the special cases for production deployments, such as running the application and creating release tags.
+3. Die Deployment-Logik aus dem ursprünglichen Workflow extrahieren (Paket herunterladen, deployen, Zusammenfassung erstellen). Achte auf Besonderheiten für Production-Deployments (z.B. Anwendung starten, Release-Tag erstellen).
 
-### Step 2: Update Main Workflow
-Modify your main CI/CD workflow to:
+### Schritt 2: Haupt-Workflow anpassen
+Passe deinen Haupt-CI/CD-Workflow an:
 
-1. Keep the `build` and `package` jobs as they are
-2. Replace the `deploy-dev` job with a call to the reusable deployment workflow
-3. Replace the `deploy-prod` job with a call to the reusable deployment workflow
-4. Update the `notify` job to use the outputs from the reusable deployment workflows
-5. Ensure proper job dependencies are maintained
+1. Behalte die Jobs `build` und `package` bei
+2. Ersetze den `deploy-dev`-Job durch einen Aufruf des wiederverwendbaren Deployment-Workflows
+3. Ersetze den `deploy-prod`-Job durch einen Aufruf des wiederverwendbaren Deployment-Workflows
+4. Aktualisiere den `notify`-Job, sodass er die Outputs der wiederverwendbaren Workflows nutzt
+5. Stelle sicher, dass die Job-Abhängigkeiten korrekt sind
 
-### Step 3: Test the Workflow
-1. Commit and push your changes to trigger the workflow
-2. Test manual dispatch with different environment selections
-3. Verify that the reusable workflows are called correctly
-4. Check that artifacts are properly passed between workflows
+### Schritt 3: Workflow testen
+1. Committe und pushe deine Änderungen, um den Workflow auszulösen
+2. Teste den manuellen Aufruf mit verschiedenen Environment-Auswahlen
+3. Überprüfe, ob die wiederverwendbaren Workflows korrekt aufgerufen werden
+4. Prüfe, ob Artefakte korrekt zwischen Workflows übergeben werden
 
-## Key Concepts
+## Wichtige Konzepte
 
-### Reusable Workflow Definition
+### Definition eines wiederverwendbaren Workflows
 ```yaml
 name: Reusable Deployment
 
@@ -60,14 +60,14 @@ on:
       environment:
         required: true
         type: string
-        description: 'Target environment'
+        description: 'Ziel-Environment'
     outputs:
       deployment-status:
-        description: 'Deployment status'
+        description: 'Deployment-Status'
         value: ${{ jobs.deploy.outputs.status }}
 ```
 
-### Calling a Reusable Workflow
+### Aufruf eines wiederverwendbaren Workflows
 ```yaml
 jobs:
   deploy:
@@ -78,39 +78,26 @@ jobs:
     secrets: inherit
 ```
 
-### Input Types
-Reusable workflows support various input types:
-- `string`: Text values
-- `number`: Numeric values  
-- `boolean`: True/false values
-- `choice`: Predefined options
+### Input-Typen
+Wiederverwendbare Workflows unterstützen verschiedene Input-Typen:
+- `string`: Textwerte
+- `number`: Zahlenwerte
+- `boolean`: Wahr/Falsch
+- `choice`: Vorgegebene Optionen
 
-### Secrets and Permissions
-- Use `secrets: inherit` to pass all secrets to the reusable workflow
-- Or explicitly pass specific secrets with the `secrets` key
-- Permissions are inherited by default but can be overridden
+### Secrets und Berechtigungen
+- Mit `secrets: inherit` werden alle Secrets an den wiederverwendbaren Workflow übergeben
+- Oder explizit einzelne Secrets mit dem `secrets`-Key
+- Berechtigungen werden standardmäßig vererbt, können aber überschrieben werden
 
-**Note:** Secrets are not really needed for this exercise. We simply use them to demonstrate how to pass secrets to reusable workflows.
+**Hinweis:** Für diese Übung sind keine Secrets zwingend nötig. Sie werden nur verwendet, um zu zeigen, wie man Secrets an wiederverwendbare Workflows übergibt.
 
-## Expected Files
-After completing this exercise, you should have:
-- `.github/workflows/reusable-deploy.yml` - Reusable deployment workflow
-- `.github/workflows/ci-cd-pipeline.yml` - Updated main workflow that calls the reusable workflows
+## Erwartete Dateien
+Nach Abschluss dieser Übung solltest du haben:
+- `.github/workflows/reusable-deploy.yml` – Wiederverwendbarer Deployment-Workflow
+- `.github/workflows/ci-cd-pipeline.yml` – Haupt-Workflow, der die wiederverwendbaren Workflows aufruft
 
-## Tips
-- Reusable workflows must be in the `.github/workflows` directory
-- Use descriptive names for inputs and outputs
-- Add good descriptions to help other developers understand the purpose
-- Test with different input combinations to ensure robustness
-- Consider adding input validation where appropriate
-
-## Verification
-To verify your solution works:
-1. Trigger the workflow manually and select development environment
-2. Check that the reusable workflows are called in the GitHub Actions UI
-3. Verify that deployment summaries are created correctly
-4. Test production deployment
-5. Confirm that notifications work as expected
-
-## Next Steps
-After completing this exercise, you'll have experience with reusable workflows. In the next exercise, you'll learn about custom composite actions, which provide another way to make your workflows more reusable and maintainable.
+## Tipps
+- Halte die Schnittstellen (Inputs/Outputs) klar und dokumentiert
+- Teste die Workflows mit verschiedenen Parametern
+- Nutze die Vorteile der Wiederverwendbarkeit für Wartbarkeit und Konsistenz

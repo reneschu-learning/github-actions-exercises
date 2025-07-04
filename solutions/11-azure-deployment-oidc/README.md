@@ -1,41 +1,42 @@
-# Exercise 11 Solution: Azure Deployment with OIDC
-This directory contains the solution for Exercise 11, which demonstrates how to deploy Azure resources using GitHub Actions with OpenID Connect (OIDC) authentication.
+# Lösung: Übung 11 – Azure Deployment mit OIDC
 
-## Solution Overview
-The solution includes:
-- A GitHub Actions workflow that authenticates using OIDC
-- Deployment of basic Azure resources (resource group, storage account, container)
-- Proper secret management and security practices
-- Error handling and cleanup procedures
+Dieses Verzeichnis enthält die Lösung für Übung 11, in der gezeigt wird, wie Azure-Ressourcen mit GitHub Actions und OpenID Connect (OIDC) bereitgestellt werden.
 
-## Workflows in this Solution
+## Überblick
+Die Lösung umfasst:
+- Einen GitHub Actions Workflow, der sich mit OIDC authentifiziert
+- Bereitstellung von Azure-Ressourcen (Resource Group, Storage Account, Container)
+- Korrektes Secret-Management und Sicherheitspraktiken
+- Fehlerbehandlung und Aufräumprozeduren
+
+## Workflows in dieser Lösung
 - `azure-deployment-oidc.yml`  
-  The main workflow file that demonstrates OIDC authentication and resource deployment.
+  Haupt-Workflow, der OIDC-Authentifizierung und Deployment demonstriert
 - `azure-deployment-oidc-with-cleanup.yml`  
-  An extended workflow that includes cleanup steps for resource deletion after deployment.
+  Erweiterter Workflow mit Aufräum-Schritten zum Löschen der Ressourcen nach dem Deployment
 
-## Key Learning Points
+## Wichtige Lernpunkte
 
-### 1. OIDC Authentication
-- Uses `azure/login` action with OIDC
-- Eliminates the need for long-lived secrets
-- Provides immediate access with short-lived tokens
+### 1. OIDC-Authentifizierung
+- Verwendet die Action `azure/login` mit OIDC
+- Keine langfristigen Secrets nötig
+- Zugriff mit kurzlebigen Tokens
 
-### 2. Resource Deployment Pattern
-- Creates resources using Azure CLI commands
-- Implements proper tagging for resource management
-- Includes verification steps
+### 2. Ressourcenbereitstellung
+- Erstellt Ressourcen mit Azure CLI-Befehlen
+- Setzt sinnvolle Tags für das Ressourcenmanagement
+- Enthält Verifikationsschritte
 
-### 3. Security Considerations
-- No sensitive information stored
-- Service principal follows principle of least privilege
-- No hardcoded credentials in workflow files
+### 3. Sicherheitsaspekte
+- Keine sensiblen Informationen gespeichert
+- Service Principal folgt dem Prinzip der minimalen Rechtevergabe
+- Keine hartkodierten Zugangsdaten in Workflow-Dateien
 
-## Comparison with Service Principal ID/Secret
-| Feature | Service Principal (Exercise 10) | OIDC |
+## Vergleich mit Service Principal ID/Secret
+| Feature | Service Principal (Übung 10) | OIDC |
 |---------|------------------|-------------------|
-| Setup Complexity | Simple | Moderate |
-| Secret Management | Required | Not Required |
-| Security | Good | Excellent |
-| Maintenance | Regular rotation | Minimal |
-| Token Lifetime | Long-lived | Short-lived |
+| Setup-Komplexität | Einfach | Mittel |
+| Secret-Management | Erforderlich | Nicht erforderlich |
+| Sicherheit | Gut | Exzellent |
+| Wartung | Regelmäßige Rotation | Minimal |
+| Token-Lebensdauer | Lang | Kurz |

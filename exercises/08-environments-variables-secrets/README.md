@@ -1,100 +1,100 @@
-# Exercise 8: Environments, Variables, and Secrets
+# Übung 8: Environments, Variablen und Secrets
 
-## Learning Objectives
-In this exercise, you will learn how to:
-- Create and use environments to control access to jobs
-- Use repository variables and environment variables
-- Use *local* environment variables to store reusable values within the workflow (or to mitigate script injection)
-- Store and use secrets securely in workflows
-- Understand the precedence of variables and secrets
-- Configure environment protection rules
+## Lernziele
+In dieser Übung lernst du:
+- Wie du Environments erstellst und verwendest, um den Zugriff auf Jobs zu steuern
+- Wie du Repository- und Umgebungsvariablen verwendest
+- Wie du *lokale* Umgebungsvariablen für wiederverwendbare Werte im Workflow nutzt (oder um Skript-Injektion zu vermeiden)
+- Wie du Secrets sicher in Workflows speicherst und verwendest
+- Wie die Priorität von Variablen und Secrets funktioniert
+- Wie du Schutzregeln für Environments konfigurierst
 
-## Background
-Environments, variables, and secrets are essential components for managing configuration and sensitive data in GitHub Actions workflows. They allow you to:
-- Separate configuration between different deployment stages (dev, staging, production)
-- Store sensitive information like API keys, passwords, and tokens securely
-- Control access to specific environments with protection rules
-- Maintain different configurations for different branches or deployment targets
+## Hintergrund
+Environments, Variablen und Secrets sind essenzielle Bestandteile für das Management von Konfiguration und sensiblen Daten in GitHub Actions Workflows. Sie ermöglichen dir:
+- Konfigurationen für verschiedene Deployment-Stufen (dev, staging, production) zu trennen
+- Sensible Informationen wie API-Keys, Passwörter und Tokens sicher zu speichern
+- Den Zugriff auf bestimmte Environments mit Schutzregeln zu kontrollieren
+- Unterschiedliche Konfigurationen für verschiedene Branches oder Deployments zu pflegen
 
-## Instructions
+## Anleitung
 
-### Part 1: Create Repository Variables
-1. In your repository, go to **Settings > Secrets and variables > Actions**
-2. Click on the **Variables** tab
-3. Create the following repository variables:
-   - `APP_NAME`: Set to `my-awesome-app`
-   - `DEFAULT_REGION`: Set to `us-east-1`
+### Teil 1: Repository-Variablen erstellen
+1. Gehe in deinem Repository zu **Settings > Secrets and variables > Actions**
+2. Klicke auf den Tab **Variables**
+3. Erstelle folgende Repository-Variablen:
+   - `APP_NAME`: Setze auf `my-awesome-app`
+   - `DEFAULT_REGION`: Setze auf `us-east-1`
 
-### Part 2: Create Environments and Environment Variables
-1. In your repository, go to **Settings > Environments**
-2. Create two environments:
+### Teil 2: Environments und Umgebungsvariablen erstellen
+1. Gehe zu **Settings > Environments**
+2. Erstelle zwei Environments:
    - `development`
    - `production`
-3. For the `development` environment:
-   - Add environment variable `ENVIRONMENT_NAME`: `dev`
-   - Add environment variable `API_URL`: `https://dev-api.example.com`
-4. For the `production` environment:
-   - Add environment variable `ENVIRONMENT_NAME`: `prod`
-   - Add environment variable `API_URL`: `https://api.example.com`
-   - Configure protection rules:
-     - Required reviewers: Add yourself
-     - Wait timer: 1 minute
+3. Für das Environment `development`:
+   - Füge die Umgebungsvariable `ENVIRONMENT_NAME`: `dev` hinzu
+   - Füge die Umgebungsvariable `API_URL`: `https://dev-api.example.com` hinzu
+4. Für das Environment `production`:
+   - Füge die Umgebungsvariable `ENVIRONMENT_NAME`: `prod` hinzu
+   - Füge die Umgebungsvariable `API_URL`: `https://api.example.com` hinzu
+   - Konfiguriere Schutzregeln:
+     - Erforderliche Reviewer: Füge dich selbst hinzu
+     - Wartezeit: 1 Minute
 
-### Part 3: Create Secrets
-1. Go back to **Settings > Secrets and variables > Actions**
-2. Click on the **Secrets** tab
-3. Create a repository secret:
-   - `API_KEY`: Set to `super-secret-api-key-12345`
-4. For each environment (`development` and `production`):
-   - Add environment secret `DATABASE_PASSWORD`:
+### Teil 3: Secrets erstellen
+1. Gehe zurück zu **Settings > Secrets and variables > Actions**
+2. Klicke auf den Tab **Secrets**
+3. Erstelle ein Repository-Secret:
+   - `API_KEY`: Setze auf `super-secret-api-key-12345`
+4. Für jedes Environment (`development` und `production`):
+   - Füge das Environment-Secret `DATABASE_PASSWORD` hinzu:
      - Development: `dev-password-123`
      - Production: `prod-password-xyz`
 
-### Part 4: Create the Workflow
-Create a workflow file `.github/workflows/environments-variables-secrets.yml` with the following requirements:
+### Teil 4: Workflow erstellen
+Erstelle eine Workflow-Datei `.github/workflows/environments-variables-secrets.yml` mit folgenden Anforderungen:
 
-1. **Trigger**: Manual trigger with inputs:
-   - `environment`: Choice input with options `development` and `production`
-   - `deploy_version`: String input for version number
+1. **Trigger**: Manueller Trigger mit Inputs:
+   - `environment`: Auswahlfeld mit den Optionen `development` und `production`
+   - `deploy_version`: String-Input für die Versionsnummer
 
-2. **Local Variables**:
-   - Use `env` to define local variables within the workflow
-   - Example: `actor: ${{ github.actor }}`
+2. **Lokale Variablen**:
+   - Verwende `env`, um lokale Variablen im Workflow zu definieren
+   - Beispiel: `actor: ${{ github.actor }}`
 
 3. **Jobs**:
-   - `deploy`: 
-     - Uses the environment specified in the input
-     - Displays all variables and secrets
-     - Shows the precedence of variables (repository vs environment)
+   - `deploy`:
+     - Nutzt das im Input angegebene Environment
+     - Zeigt alle Variablen und Secrets an
+     - Zeigt die Priorität von Variablen (Repository vs. Environment)
 
-### Part 5: Test the Workflow
-1. Run the workflow manually and select the `development` environment
-2. Observe how variables and secrets are accessed
-3. Run the workflow again with the `production` environment
-4. Notice the protection rules in action for the production environment
+### Teil 5: Workflow testen
+1. Starte den Workflow manuell und wähle das Environment `development`
+2. Beobachte, wie Variablen und Secrets abgerufen werden
+3. Starte den Workflow erneut mit dem Environment `production`
+4. Beachte die Schutzregeln für das Production-Environment
 
-## Expected Outcome
-After completing this exercise, you should have:
-- A workflow that demonstrates the use of environments, variables, and secrets
-- Understanding of how environment protection rules work
-- Knowledge of variable and secret precedence
-- Experience with different types of variables and secrets
+## Erwartetes Ergebnis
+Nach Abschluss dieser Übung solltest du:
+- Einen Workflow haben, der den Umgang mit Environments, Variablen und Secrets demonstriert
+- Verstehen, wie Environment-Schutzregeln funktionieren
+- Wissen, wie die Priorität von Variablen und Secrets funktioniert
+- Erfahrung mit verschiedenen Typen von Variablen und Secrets haben
 
-## Key Concepts
-- **Repository Variables**: Available to all environments and workflows
-- **Environment Variables**: Specific to an environment, override repository variables
-- **Repository Secrets**: Available to all environments and workflows
-- **Environment Secrets**: Specific to an environment, override repository secrets
-- **Environment Protection Rules**: Control access to environments
-- **Variable Precedence**: Environment > Repository
-- **Secret Precedence**: Environment > Repository
+## Wichtige Konzepte
+- **Repository-Variablen**: Für alle Environments und Workflows verfügbar
+- **Umgebungsvariablen**: Spezifisch für ein Environment, überschreiben Repository-Variablen
+- **Repository-Secrets**: Für alle Environments und Workflows verfügbar
+- **Environment-Secrets**: Spezifisch für ein Environment, überschreiben Repository-Secrets
+- **Environment-Schutzregeln**: Steuern den Zugriff auf Environments
+- **Variablen-Priorität**: Environment > Repository
+- **Secret-Priorität**: Environment > Repository
 
-## Tips
-- Always use secrets for sensitive information, never variables
-- Environment variables and secrets override repository-level ones
-- Environment protection rules are crucial for production deployments
-- Use meaningful names for your variables and secrets
-- Test with both environments to see the differences
+## Tipps
+- Verwende für sensible Informationen immer Secrets, niemals Variablen
+- Umgebungsvariablen und Secrets überschreiben Repository-Variablen und -Secrets
+- Schutzregeln für Environments sind für Production-Deployments entscheidend
+- Verwende aussagekräftige Namen für Variablen und Secrets
+- Teste mit beiden Environments, um die Unterschiede zu sehen
 
-## Next Steps
-In the next exercise, you'll build a complete CI/CD pipeline that incorporates these concepts along with building, testing, and deploying applications.
+## Nächste Schritte
+In der nächsten Übung baust du eine vollständige CI/CD-Pipeline, die diese Konzepte mit Build, Test und Deployment kombiniert.

@@ -1,89 +1,89 @@
-# GitHub Actions Exercise Repository
-This repository contains a series of exercises designed to help you learn and practice GitHub Actions. Each exercise is contained within its own directory within the [exercises](./exercises/) directory, with a `README.md` file that provides instructions and context. Some exercises build on previous ones, so it's recommended to complete them in order. The repository also includes a [solutions](./solutions/) directory that contains example solutions for each exercise. You can refer to these solutions if you get stuck or want to compare your solution with an example.
+# GitHub Actions Übungs-Repository
+Dieses Repository enthält eine Reihe von Übungen, mit denen du GitHub Actions lernen und praktisch anwenden kannst. Jede Übung befindet sich in einem eigenen Verzeichnis im [exercises](./exercises/)-Ordner und enthält eine `README.md` mit Anleitung und Kontext. Einige Übungen bauen aufeinander auf, daher empfiehlt es sich, sie der Reihe nach zu bearbeiten. Im [solutions](./solutions/)-Verzeichnis findest du Beispiel-Lösungen zu jeder Übung. Du kannst diese Lösungen nutzen, wenn du nicht weiterkommst oder deine Lösung vergleichen möchtest.
 
-## Prerequisites
-To complete the exercises in this repository, you should have the following prerequisites:
-- A GitHub account: You will need a GitHub account to create repositories and run workflows.
-  - A personal account is preferred as it allows more freedom without running into enterprise- or organization-level restrictions.
-- Basic knowledge of Git: Familiarity with Git commands such as `clone`, `commit`, `push`, and `pull` will be helpful.
-- Basic understanding of YAML: GitHub Actions workflows are defined in YAML files, so a basic understanding of YAML syntax is required.
-- Familiarity with GitHub: You should be comfortable navigating GitHub, creating repositories, and managing issues and pull requests.
-- A code editor: You can use any code editor of your choice to edit the workflow files and read the instructions in the `README.md` files.
-- Optional: Familiarity with the command line or terminal, as some exercises may involve running commands in a terminal.
+## Voraussetzungen
+Um die Übungen in diesem Repository zu bearbeiten, solltest du Folgendes mitbringen:
+- Ein GitHub-Account: Du benötigst einen Account, um Repositories zu erstellen und Workflows auszuführen.
+  - Ein persönlicher Account ist empfehlenswert, da du damit weniger Einschränkungen durch Organisationen hast.
+- Grundkenntnisse in Git: Befehle wie `clone`, `commit`, `push` und `pull` solltest du kennen.
+- Grundverständnis von YAML: GitHub Actions Workflows werden in YAML definiert, daher solltest du die Syntax verstehen.
+- Vertrautheit mit GitHub: Du solltest dich auf GitHub zurechtfinden, Repositories anlegen und Issues sowie Pull Requests verwalten können.
+- Ein Code-Editor: Du kannst jeden Editor deiner Wahl nutzen, um Workflow-Dateien zu bearbeiten und die Anleitungen zu lesen.
+- Optional: Grundkenntnisse im Umgang mit der Kommandozeile, da manche Übungen Terminalbefehle enthalten.
 
-## Getting Started
-To get started with the exercises, follow these steps:
+## Einstieg
+So startest du mit den Übungen:
 
-1. **Clone the Repository**: Use the following command to clone the repository to your local machine:
+1. **Repository klonen**: Klone das Repository auf deinen Rechner:
    ```
    git clone https://github.com/reneschu-learning/github-actions-exercises.git
    ```
 
-2. **Navigate to an Exercise Directory**: Each exercise is located in its own directory. Navigate to the directory of the exercise you want to work on:
+2. **In ein Übungs-Verzeichnis wechseln**: Jede Übung ist in einem eigenen Ordner. Wechsle in das gewünschte Verzeichnis:
    ```
    cd github-actions-exercises/01-hello-world
    ```
 
-3. **Follow the Instructions**: Open the `README.md` file in the exercise directory and follow the instructions to complete the exercise.
+3. **Anleitung befolgen**: Öffne die `README.md` im Übungsordner und folge den Schritten.
 
-# Table of Contents
-## Foundational Exercises
-- [Exercise 1: Hello World](./exercises/01-hello-world/README.md) ([Solution](./solutions/01-hello-world/))  
-  This exercise introduces you to GitHub Actions by creating a simple workflow that prints "Hello, World!" to the console. It introduces the basic structure of a GitHub Actions workflow file and how to trigger it manually.
-- [Exercise 2: Accessing Context](./exercises/02-accessing-context/README.md) ([Solution](./solutions/02-accessing-context/))  
-  In this exercise, you will learn how to access the context and use it in your workflows. You will modify the "Hello, World!" workflow from exercise 1 to use the GitHub context and show information about the actor (i.e., the user who triggered the workflow).
-- [Exercise 3: Trigger Inputs](./exercises/03-trigger-inputs/README.md) ([Solution](./solutions/03-trigger-inputs/))
-  In this exercise, you will learn how to create a workflow that accepts inputs when triggered manually. You will modify the "Hello, World!" workflow from exercise 2 to accept a name input and print a personalized greeting.
-- [Exercise 4: Issue Trigger](./exercises/04-issue-trigger/README.md) ([Solution](./solutions/04-issue-trigger/))
-  This exercise introduces you to triggering workflows based on GitHub issues. You will modify the "Hello, World!" workflow from exercise 3 to also run when an issue is opened and print the issue title and body to the console. This exercise will also dive into possible security considerations when using context and inputs in workflows.
-- [Exercise 5: Conditions](./exercises/05-conditions/README.md) ([Solution](./solutions/05-conditions/))
-  In this exercise, you will learn how to use conditions to control execution of steps. You will modify the "Hello, World!" workflow from exercise 4 so that it doesn't fail when it is not triggered by an issue event. You will also add another trigger (cron) and react to it conditionally.
-- [Exercise 6: Using Workflow Token](./exercises/06-workflow-token/README.md) ([Solution](./solutions/06-workflow-token/))
-  This exercise introduces you to the workflow token, which is a special token that is automatically created for each workflow run. You will learn how to use the workflow token to authenticate API requests and perform actions on behalf of the workflow. This exercise also introduces the [GitHub CLI](https://cli.github.com/) (`gh`) and shows how to use it in workflows.
-- [Exercise 7: Multiple Jobs](./exercises/07-multiple-jobs/README.md) ([Solution](./solutions/07-multiple-jobs/))
-  This exercise introduces you to workflows with multiple jobs. It shows how to run multiple jobs in parallel, how to set dependencies between jobs, and how to use job-level conditions. In addition, we will introduce the matrix strategy as well as job outputs and artifacts to pass data between jobs. This exercise also introduces the first two actions `actions/upload-artifact` and `actions/download-artifact` to handle artifacts.
-- [Exercise 8: Environments, Variables, and Secrets](./exercises/08-environments-variables-secrets/README.md) ([Solution](./solutions/08-environments-variables-secrets/))
-  In this exercise, you will learn how to use environments, variables, and secrets in your workflows. You will create a workflow that uses an environment to control access to a job and uses secrets to store sensitive information. You will also learn how to use variables to store reusable values in your workflows.
+# Inhaltsverzeichnis
+## Grundlagen-Übungen
+- [Übung 1: Hello World](./exercises/01-hello-world/README.md) ([Lösung](./solutions/01-hello-world/))  
+  Einstieg in GitHub Actions mit einem einfachen Workflow, der "Hello, World!" ausgibt. Einführung in die Grundstruktur einer Workflow-Datei und den manuellen Trigger.
+- [Übung 2: Zugriff auf Kontext](./exercises/02-accessing-context/README.md) ([Lösung](./solutions/02-accessing-context/))  
+  Hier lernst du, wie du Kontextinformationen in Workflows nutzt. Du erweiterst den "Hello, World!"-Workflow aus Übung 1, um Informationen über den Auslöser (actor) anzuzeigen.
+- [Übung 3: Trigger-Inputs](./exercises/03-trigger-inputs/README.md) ([Lösung](./solutions/03-trigger-inputs/))
+  Du lernst, wie du einen Workflow erstellst, der beim manuellen Auslösen Eingaben akzeptiert. Der "Hello, World!"-Workflow aus Übung 2 wird erweitert, um einen Namen als Input zu akzeptieren und eine personalisierte Begrüßung auszugeben.
+- [Übung 4: Issue-Trigger](./exercises/04-issue-trigger/README.md) ([Lösung](./solutions/04-issue-trigger/))
+  Hier lernst du, wie du Workflows durch GitHub Issues auslöst. Der Workflow aus Übung 3 wird erweitert, sodass er auch bei neuen Issues läuft und Titel sowie Body des Issues ausgibt. Außerdem werden Sicherheitsaspekte beim Umgang mit Kontext und Inputs behandelt.
+- [Übung 5: Bedingungen](./exercises/05-conditions/README.md) ([Lösung](./solutions/05-conditions/))
+  In dieser Übung lernst du, Bedingungen zu nutzen, um die Ausführung von Schritten zu steuern. Der Workflow aus Übung 4 wird so angepasst, dass er nicht fehlschlägt, wenn er nicht durch ein Issue ausgelöst wird. Außerdem wird ein weiterer Trigger (cron) hinzugefügt.
+- [Übung 6: Verwendung des Workflow-Tokens](./exercises/06-workflow-token/README.md) ([Lösung](./solutions/06-workflow-token/))
+  Einführung in das Workflow-Token, das für jeden Workflow-Lauf automatisch erstellt wird. Du lernst, wie du das Token für API-Requests und Aktionen im Namen des Workflows nutzt. Außerdem wird die [GitHub CLI](https://cli.github.com/) (`gh`) vorgestellt.
+- [Übung 7: Mehrere Jobs](./exercises/07-multiple-jobs/README.md) ([Lösung](./solutions/07-multiple-jobs/))
+  Einführung in Workflows mit mehreren Jobs. Du lernst, wie man Jobs parallel ausführt, Abhängigkeiten setzt und Bedingungen auf Job-Ebene nutzt. Außerdem werden Matrix-Strategien, Job-Outputs und Artefakte behandelt.
+- [Übung 8: Environments, Variablen und Secrets](./exercises/08-environments-variables-secrets/README.md) ([Lösung](./solutions/08-environments-variables-secrets/))
+  Hier lernst du, wie du Environments, Variablen und Secrets in Workflows verwendest. Du erstellst einen Workflow, der ein Environment zur Steuerung des Zugriffs nutzt und Secrets für sensible Daten verwendet. Außerdem lernst du, wie du Variablen für wiederverwendbare Werte einsetzt.
 
-## Intermediate Exercises
-- [Exercise 9: Full CI/CD Pipeline](./exercises/09-full-ci-cd-pipeline/README.md) ([Solution](./solutions/09-full-ci-cd-pipeline/))
-  This exercise brings together everything you've learned so far to create a complete CI/CD pipeline. You will create a workflow that builds, tests, and deploys a sample application. You will also learn about new triggers (`push`, `pull_request`) and start using actions like `actions/checkout` to check out the code or `actions/setup-dotnet` to set up the .NET environment. You can use the simple .NET console application provided in the [sample-app](./exercises/09-full-ci-cd-pipeline/sample-app/) directory for this exercise.
-- [Exercise 10: Simple Workflow with Azure Deployment (Service Principal)](./exercises/10-azure-deployment-sp/README.md) ([Solution](./solutions/10-azure-deployment-sp/))
-  In this exercise, you will create a simple workflow for deploying some resources to Azure using a service principal for authentication. You will learn how to create a service principal, configure it in your workflow, and deploy a few resources (resource group, storage account, storage container) to Azure. This exercise also introduces the `azure/login` action to authenticate with Azure.
-- [Exercise 11: Simple Workflow with Azure Deployment (OIDC)](./exercises/11-azure-deployment-oidc/README.md) ([Solution](./solutions/11-azure-deployment-oidc/))
-  This exercise builds on the previous one by using OIDC authentication to deploy the resources to Azure. You will learn how to configure federated credentials in Azure and use the `azure/login` action with OIDC authentication, which removes the need to store any secrets in your repository.
+## Fortgeschrittene Übungen
+- [Übung 9: Vollständige CI/CD-Pipeline](./exercises/09-full-ci-cd-pipeline/README.md) ([Lösung](./solutions/09-full-ci-cd-pipeline/))
+  Hier kombinierst du alles Gelernte zu einer vollständigen CI/CD-Pipeline. Du erstellst einen Workflow, der eine Beispielanwendung baut, testet und deployed. Außerdem lernst du neue Trigger (`push`, `pull_request`) und Actions wie `actions/checkout` oder `actions/setup-dotnet` kennen. Die Beispielanwendung findest du im [sample-app](./exercises/09-full-ci-cd-pipeline/sample-app/)-Verzeichnis.
+- [Übung 10: Einfacher Workflow mit Azure Deployment (Service Principal)](./exercises/10-azure-deployment-sp/README.md) ([Lösung](./solutions/10-azure-deployment-sp/))
+  Du erstellst einen einfachen Workflow für das Deployment von Ressourcen nach Azure mit Service Principal-Authentifizierung. Du lernst, wie man einen Service Principal erstellt, ihn im Workflow konfiguriert und Ressourcen (Resource Group, Storage Account, Storage Container) bereitstellt. Die Action `azure/login` wird vorgestellt.
+- [Übung 11: Einfacher Workflow mit Azure Deployment (OIDC)](./exercises/11-azure-deployment-oidc/README.md) ([Lösung](./solutions/11-azure-deployment-oidc/))
+  Aufbauend auf der vorherigen Übung nutzt du OIDC-Authentifizierung für das Azure-Deployment. Du lernst, wie man föderierte Anmeldeinformationen in Azure konfiguriert und die Action `azure/login` mit OIDC verwendet – ganz ohne gespeicherte Secrets.
 
-## Advanced Exercises
-- [Exercise 12: Reusable Workflows](./exercises/12-reusable-workflows/README.md) ([Solution](./solutions/12-reusable-workflows/))
-  In this exercise, you will learn how to create reusable workflows that can be called from other workflows. You will rewrite the workflow from exercise 9 to reduce duplication by moving parts of it to a reusable workflow.
-- [Exercise 13: Custom Composite Actions](./exercises/13-custom-composite-actions/README.md) ([Solution](./solutions/13-custom-composite-actions/))
-  This exercise introduces you to creating custom composite actions, which is another way to make parts of your workflows reusable without introducing additional jobs. You will create a composite action that encapsulates the tagging step from the reusable workflow of exercise 12 and can be reused in multiple workflows. You will also learn how to use inputs and outputs in composite actions.
-- [Exercise 14: Accessing External Repositories](./exercises/14-accessing-external-repositories/README.md) ([Solution](./solutions/14-accessing-external-repositories/))
-  This exercise introduces you to accessing external repositories in your workflows using GitHub Apps. You will learn how to create a GitHub App with a private key, install it in an organization, store the private key as a secret, and use the `actions/create-github-app-token@v1` action to generate tokens for accessing external repositories. You will create a workflow that uses the GitHub App to create issues in different repositories.
+## Experten-Übungen
+- [Übung 12: Wiederverwendbare Workflows](./exercises/12-reusable-workflows/README.md) ([Lösung](./solutions/12-reusable-workflows/))
+  Du lernst, wie du wiederverwendbare Workflows erstellst, die von anderen Workflows aufgerufen werden können. Die Pipeline aus Übung 9 wird refaktoriert, um Teile davon in einen wiederverwendbaren Workflow auszulagern.
+- [Übung 13: Eigene Composite Actions](./exercises/13-custom-composite-actions/README.md) ([Lösung](./solutions/13-custom-composite-actions/))
+  Einführung in eigene Composite Actions, mit denen du Teile deiner Workflows wiederverwendbar machen kannst, ohne zusätzliche Jobs zu erzeugen. Du erstellst eine Composite Action, die den Tagging-Schritt aus dem wiederverwendbaren Workflow von Übung 12 kapselt. Du lernst, wie man Inputs und Outputs in Composite Actions nutzt.
+- [Übung 14: Zugriff auf externe Repositories](./exercises/14-accessing-external-repositories/README.md) ([Lösung](./solutions/14-accessing-external-repositories/))
+  Hier lernst du, wie du mit GitHub Apps in Workflows auf externe Repositories zugreifst. Du erstellst eine GitHub App mit privatem Schlüssel, installierst sie in einer Organisation, speicherst den Schlüssel als Secret und verwendest die Action `actions/create-github-app-token@v1`, um Tokens für den Zugriff auf externe Repositories zu generieren. Du erstellst einen Workflow, der mit der App Issues in anderen Repositories anlegt.
 
-# Contributing
-If you would like to contribute to this repository, please follow these steps:
+# Mitmachen
+Wenn du zu diesem Repository beitragen möchtest, folge diesen Schritten:
 
-1. **Fork the Repository**: Click the "Fork" button in the top right corner of the repository page on GitHub.
+1. **Repository forken**: Klicke oben rechts auf "Fork" auf der GitHub-Seite.
 
-2. **Create a New Branch**: Create a new branch for your changes:
+2. **Neuen Branch anlegen**:
    ```
-   git checkout -b my-feature-branch
-   ```
-
-3. **Make Your Changes**: Make the necessary changes to the code or documentation.
-
-4. **Commit Your Changes**: Commit your changes with a descriptive commit message:
-   ```
-   git commit -m "Add my feature"
+   git checkout -b mein-feature-branch
    ```
 
-5. **Push Your Changes**: Push your changes to your forked repository:
+3. **Änderungen vornehmen**: Passe Code oder Dokumentation an.
+
+4. **Änderungen committen**:
    ```
-   git push origin my-feature-branch
+   git commit -m "Mein Feature hinzugefügt"
    ```
 
-6. **Create a Pull Request**: Go to the original repository and create a pull request from your forked repository.
+5. **Änderungen pushen**:
+   ```
+   git push origin mein-feature-branch
+   ```
 
-## License
-This repository is licensed under the MIT License. See the [LICENSE](LICENSE) file for more information.
+6. **Pull Request erstellen**: Erstelle im Original-Repository einen Pull Request von deinem Fork.
+
+## Lizenz
+Dieses Repository steht unter der MIT-Lizenz. Siehe [LICENSE](LICENSE) für Details.

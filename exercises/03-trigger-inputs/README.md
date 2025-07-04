@@ -1,53 +1,53 @@
-# Exercise 3: Trigger Inputs
+# Übung 3: Trigger-Inputs
 
-## Objective
-Learn how to create workflows that accept inputs when triggered manually, allowing for dynamic behavior based on user input.
+## Ziel
+Lerne, wie du Workflows erstellst, die beim manuellen Auslösen Eingaben akzeptieren und so ein dynamisches Verhalten basierend auf Benutzereingaben ermöglichen.
 
-## Instructions
+## Anleitung
 
-1. **Add workflow inputs**: Modify your workflow from Exercise 2 to accept inputs:
-   - Add a `name` input (required) with description "Your name for personalized greeting"
-   - Add a `greeting` input (optional) with description "Custom greeting message" and default value "Hello"
+1. **Füge Workflow-Inputs hinzu**: Erweitere deinen Workflow aus Übung 2, sodass er Eingaben akzeptiert:
+   - Füge ein `name`-Input (erforderlich) mit der Beschreibung „Dein Name für eine personalisierte Begrüßung“ hinzu
+   - Füge ein `greeting`-Input (optional) mit der Beschreibung „Benutzerdefinierte Begrüßungsnachricht“ und dem Standardwert „Hello“ hinzu
 
-2. **Use inputs in workflow**: Modify the workflow to:
-   - Use the `greeting` and `name` inputs to create a personalized message
-   - Still display the context information from Exercise 2
+2. **Verwende Inputs im Workflow**: Passe den Workflow an, sodass:
+   - Die Inputs `greeting` und `name` für eine personalisierte Nachricht verwendet werden
+   - Die Kontextinformationen aus Übung 2 weiterhin angezeigt werden
 
-3. **Test with different inputs**: Try running the workflow with:
-   - Just the required `name` input
-   - Both `name` and `greeting` inputs
-   - Different greeting messages
+3. **Teste mit verschiedenen Eingaben**: Probiere den Workflow aus mit:
+   - Nur dem erforderlichen `name`-Input
+   - Sowohl `name`- als auch `greeting`-Input
+   - Verschiedenen Begrüßungsnachrichten
 
-## Key Concepts
-- Workflow inputs using `workflow_dispatch.inputs`
-- Input types, descriptions, and default values
-- Required vs optional inputs
-- Accessing inputs using `github.event.inputs.input_name`
+## Wichtige Konzepte
+- Workflow-Inputs mit `workflow_dispatch.inputs`
+- Input-Typen, Beschreibungen und Standardwerte
+- Erforderliche vs. optionale Inputs
+- Zugriff auf Inputs mit `github.event.inputs.input_name`
 
-## Expected Output
+## Erwartete Ausgabe
 ```
 Hello Alice!
-Triggered by: [your-username]
+Triggered by: [dein-benutzername]
 Repository: [owner/repo-name]
 Reference: refs/heads/main
 ```
 
-Or with custom greeting:
+Oder mit benutzerdefinierter Begrüßung:
 ```
 Good morning Alice!
-Triggered by: [your-username]
-Repository: [owner/repo-name]  
+Triggered by: [dein-benutzername]
+Repository: [owner/repo-name]
 Reference: refs/heads/main
 ```
 
-## Hints
-- Define inputs under `on.workflow_dispatch.inputs`
-- Each input can have properties: `description`, `required`, `default`, `type`
-- Access inputs using `${{ github.event.inputs.input_name }}`
-- The `type` can be `string`, `boolean`, `choice`, or `environment`
+## Hinweise
+- Definiere Inputs unter `on.workflow_dispatch.inputs`
+- Jeder Input kann die Eigenschaften `description`, `required`, `default`, `type` haben
+- Auf Inputs greifst du mit `${{ github.event.inputs.input_name }}` zu
+- Der `type` kann `string`, `boolean`, `choice` oder `environment` sein
 
-## Security Considerations
-This workflow is susceptible to script injection because the inputs are directly used in the output. What happens if you set the `name` input to `"; ls -Rla ~; echo "`? 😲 Try it out and see how the workflow behaves. What if we used something like `"; rm -rf /; echo"`? 🤯 We will fix this security issue in the next exercise.
+## Sicherheitshinweis
+Dieser Workflow ist anfällig für Skript-Injektion, da die Eingaben direkt in der Ausgabe verwendet werden. Was passiert, wenn du das `name`-Input auf `"; ls -Rla ~; echo "` setzt? 😲 Probiere es aus und beobachte das Verhalten. Was passiert bei `"; rm -rf /; echo"`? 🫣 Wir beheben dieses Sicherheitsproblem in der nächsten Übung.
 
-## Solution
-If you get stuck, check the [solution](../../solutions/03-trigger-inputs/) directory for a working example.
+## Lösung
+Wenn du nicht weiterkommst, sieh im [solution](../../solutions/03-trigger-inputs/) Verzeichnis nach einem funktionierenden Beispiel nach.

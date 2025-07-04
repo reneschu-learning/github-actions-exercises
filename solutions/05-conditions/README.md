@@ -1,36 +1,36 @@
-# Solution: Conditions
+# Lösung: Bedingungen
 
-This directory contains the solution for Exercise 5: Conditions.
+Dieses Verzeichnis enthält die Lösung für Übung 5: Bedingungen.
 
-## Files
-- `hello-world.yml` - The GitHub Actions workflow file with advanced conditions
+## Dateien
+- `hello-world.yml` – Die GitHub Actions Workflow-Datei mit erweiterten Bedingungen
 
-## Key Features
-- Three trigger types: manual, issues, and scheduled
-- Step-level conditional execution
-- Complex conditional expressions for run names
-- Safe handling of context and input data
+## Wichtige Merkmale
+- Drei Trigger-Typen: manuell, Issues und Zeitplan
+- Bedingte Ausführung auf Schritt-Ebene
+- Komplexe bedingte Ausdrücke für run-names
+- Sichere Verarbeitung von Kontext- und Eingabedaten
 
-## Triggers
-- `workflow_dispatch` - Manual trigger with inputs
-- `issues` (opened) - Issue creation trigger
-- `schedule` - Daily at 9:00 AM UTC
+## Trigger
+- `workflow_dispatch` – Manueller Trigger mit Inputs
+- `issues` (opened) – Trigger bei Issue-Erstellung
+- `schedule` – Täglich um 9:00 Uhr UTC
 
-## Advanced Concepts
-- Step-level conditions with `if:`
-- Event type detection
-- `format()` function for dynamic run name
+## Erweiterte Konzepte
+- Bedingungen auf Schritt-Ebene mit `if:`
+- Erkennung des Event-Typs
+- `format()`-Funktion für dynamische run-names
 
-## Usage
-1. Copy the workflow file to `.github/workflows/` in your repository
-2. Commit and push the changes
-3. Test all three trigger types:
-   - Manual execution
-   - Create an issue
-   - Wait for scheduled run (or modify cron for testing)
+## Verwendung
+1. Kopiere die Workflow-Datei nach `.github/workflows/` in deinem Repository
+2. Committe und pushe die Änderungen
+3. Teste alle drei Trigger-Typen:
+   - Manuelle Ausführung
+   - Erstelle ein Issue
+   - Warte auf den Zeitplan (oder passe den Cron zum Testen an)
 
-## What You'll Learn
-- Complex conditional logic
-- Step-level conditions
-- Cron scheduling syntax
-- Event type handling
+## Was du lernst
+- Komplexe bedingte Logik
+- Bedingungen auf Schritt-Ebene
+- Cron-Scheduling-Syntax
+- Event-Typ-Erkennung

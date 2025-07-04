@@ -1,153 +1,136 @@
-# Exercise 14: Accessing External Repositories
+# Übung 14: Zugriff auf externe Repositories
 
-## Objective
-In this exercise, you will learn how to access external repositories in your workflows using GitHub Apps. You will create a GitHub App, configure it with a private key, and use the `actions/create-github-app-token@v1` action to generate a token that allows your workflow to interact with issues in a different repository.
+## Ziel
+In dieser Übung lernst du, wie du mit GitHub Apps in deinen Workflows auf externe Repositories zugreifst. Du erstellst eine GitHub App, konfigurierst sie mit einem privaten Schlüssel und verwendest die Action `actions/create-github-app-token@v1`, um ein Token zu generieren, mit dem dein Workflow mit Issues in einem anderen Repository interagieren kann.
 
-## Prerequisites
-- Access to a GitHub organization or the ability to create one
-- A second repository to interact with (you can create a test repository for this exercise)
+## Voraussetzungen
+- Zugriff auf eine GitHub-Organisation oder die Möglichkeit, eine zu erstellen
+- Ein zweites Repository, mit dem interagiert werden soll (du kannst ein Test-Repository anlegen)
 
-## Learning Objectives
-By the end of this exercise, you will understand:
-- How to create and configure a GitHub App
-- How to generate and store private keys securely
-- How to use the `actions/create-github-app-token@v1` action
-- How to authenticate and interact with external repositories using GitHub Apps
-- Security best practices when working with GitHub Apps
+## Lernziele
+Am Ende dieser Übung verstehst du:
+- Wie man eine GitHub App erstellt und konfiguriert
+- Wie man private Schlüssel sicher generiert und speichert
+- Wie man die Action `actions/create-github-app-token@v1` verwendet
+- Wie man mit GitHub Apps authentifiziert und mit externen Repositories interagiert
+- Sicherheitsbest Practices beim Arbeiten mit GitHub Apps
 
-## Background
-Sometimes you need your workflows to interact with repositories other than the one where the workflow is running. For example, you might want to:
-- Create issues in a documentation repository when a bug is found
-- Update a status repository with deployment information
-- Trigger workflows in other repositories
-- Access code or data from private repositories
+## Hintergrund
+Manchmal müssen Workflows mit anderen Repositories interagieren, z.B. um:
+- Issues in einem Doku-Repository zu erstellen
+- Einen Status in einem separaten Repository zu aktualisieren
+- Workflows in anderen Repositories auszulösen
+- Auf Code oder Daten aus privaten Repositories zuzugreifen
 
-While you could use a personal access token (PAT) for this purpose, GitHub Apps provide a more secure and scalable approach:
-- **Granular permissions**: You can limit what the app can access
-- **Installation-based**: The app is installed only where needed
-- **Organization-level management**: Organization owners can manage app installations
-- **Audit trail**: All actions are clearly attributed to the app
-- **Token expiration**: Tokens are short-lived and automatically refreshed
+Ein Personal Access Token (PAT) wäre möglich, aber GitHub Apps sind sicherer und skalierbarer:
+- **Granulare Berechtigungen**: Zugriff kann genau gesteuert werden
+- **Installationsbasiert**: Die App ist nur dort installiert, wo sie gebraucht wird
+- **Organisationsebene**: Organisationseigentümer verwalten App-Installationen
+- **Audit Trail**: Alle Aktionen werden der App zugeordnet
+- **Token-Ablauf**: Tokens sind kurzlebig und werden automatisch erneuert
 
-## Step 1: Create a Target Repository
-First, create a test repository that your workflow will interact with:
+## Schritt 1: Ziel-Repository anlegen
+Lege ein Test-Repository an, mit dem dein Workflow interagieren soll:
 
-1. Create a new repository in your organization (or personal account) named `external-repo-test`
-2. You can make it public, private, or internal (for enterprise accounts)
-3. Note the repository's full name (e.g., `your-org/external-repo-test`)
+1. Erstelle ein neues Repository in deiner Organisation (oder deinem Account), z.B. `external-repo-test`
+2. Öffentlich, privat oder intern (je nach Bedarf)
+3. Notiere dir den vollständigen Namen (z.B. `deine-org/external-repo-test`)
 
-## Step 2: Create a GitHub App
-1. **Navigate to GitHub App Settings**:
-   - Go to your organization settings (or personal account settings)
-   - Click on "Developer settings" in the left sidebar
-   - Click on "GitHub Apps"
-   - Click "New GitHub App"
+## Schritt 2: GitHub App erstellen
+1. **Zu den GitHub App-Einstellungen navigieren**:
+   - Gehe zu den Organisationseinstellungen (oder Account-Einstellungen)
+   - Klicke links auf "Developer settings"
+   - Klicke auf "GitHub Apps"
+   - Klicke auf "New GitHub App"
 
-2. **Configure the GitHub App**:
-   - **GitHub App name**: `External Repo Access App` (or any **globally** unique name)
-   - **Description**: `App for accessing external repositories in workflows`
-   - **Homepage URL**: `https://localhost`  
-     This must be a valid URL, but since we don't deploy an actual application represented by this app, you can use a placeholder like `https://localhost`.
-   - **Webhook**: Uncheck "Active" (we don't need webhooks for this exercise)
+2. **GitHub App konfigurieren**:
+   - **Name:** z.B. `External Repo Access App` (muss global eindeutig sein)
+   - **Beschreibung:** `App für den Zugriff auf externe Repositories in Workflows`
+   - **Homepage URL:** `https://localhost` (Platzhalter reicht)
+   - **Webhook:** Deaktiviert lassen
 
-3. **Set Permissions**:
-   Under "Repository permissions":
-   - **Issues**: `Write` (to create issues)
-   - **Metadata**: `Read` (basic repository access)
-   - **Contents**: `Read` (to read repository contents)
+3. **Berechtigungen setzen**:
+   Unter "Repository permissions":
+   - **Issues**: Write
+   - **Metadata**: Read
+   - **Contents**: Read
 
-4. **Choose Installation Options**:
-   - Select "Only on this account" for simplicity
+4. **Installationsoptionen wählen**:
+   - "Only on this account" auswählen
 
-5. **Create the App**:
-   - Click "Create GitHub App"
-   - Note down the **App ID** from the app's settings page
+5. **App erstellen**:
+   - Klicke auf "Create GitHub App"
+   - Notiere die **App ID**
 
-## Step 3: Generate and Download Private Key
-1. **Generate Private Key**:
-   - On your GitHub App's settings page, scroll down to "Private keys"
-   - Click "Generate a private key"
-   - A `.pem` file will be downloaded to your computer
+## Schritt 3: Privaten Schlüssel generieren und herunterladen
+1. **Privaten Schlüssel generieren**:
+   - In den App-Einstellungen auf "Private keys" gehen
+   - "Generate a private key" klicken
+   - Die `.pem`-Datei herunterladen
 
-2. **Prepare the Private Key**:
-   - Open the downloaded `.pem` file in a text editor
-   - Copy the entire contents (including the `-----BEGIN RSA PRIVATE KEY-----` and `-----END RSA PRIVATE KEY-----` lines)
+2. **Privaten Schlüssel vorbereiten**:
+   - Öffne die `.pem`-Datei im Editor
+   - Kopiere den gesamten Inhalt (inkl. BEGIN/END)
 
-## Step 4: Install the GitHub App
-1. **Install the App**:
-   - Go to your GitHub App's settings page
-   - Click "Install App" in the left sidebar
-   - Click "Install" next to your organization/account
-   - Choose "Selected repositories" and select the target repository you created in Step 1
-   - Click "Install"
+## Schritt 4: GitHub App installieren
+1. **App installieren**:
+   - In den App-Einstellungen auf "Install App"
+   - "Install" neben deiner Organisation/deinem Account
+   - "Selected repositories" wählen und das Ziel-Repository auswählen
+   - "Install" klicken
 
-## Step 5: Configure Repository Secrets
-In your workflow repository (where you'll create the workflow):
+## Schritt 5: Repository-Secrets konfigurieren
+Im Workflow-Repository:
 
-1. **Add Repository Secrets**:
-   - Go to Settings → Secrets and variables → Actions
-   - Click "New repository secret"
-   - Create the following secrets:
-     - **Name**: `APP_ID`
-     - **Value**: The App ID from Step 2
-   - Create another secret:
-     - **Name**: `APP_PRIVATE_KEY`
-     - **Value**: The entire private key content from Step 3
+1. **Secrets hinzufügen**:
+   - Gehe zu Settings → Secrets and variables → Actions
+   - "New repository secret" klicken
+   - **Name:** `APP_ID`, **Wert:** App ID
+   - **Name:** `APP_PRIVATE_KEY`, **Wert:** kompletter privater Schlüssel
 
-## Step 6: Create the Workflow
-Create a workflow file `.github/workflows/external-repo-access.yml` with the following requirements:
+## Schritt 6: Workflow erstellen
+Erstelle eine Workflow-Datei `.github/workflows/external-repo-access.yml` mit folgenden Anforderungen:
 
-1. **Trigger**: Manual trigger (`workflow_dispatch`) with inputs:
-   - `target_repo`: The repository to create an issue in (default: the test repo you created)
-   - `issue_title`: Title for the issue to create
-   - `issue_body`: Body content for the issue
+1. **Trigger:** Manueller Trigger (`workflow_dispatch`) mit Inputs:
+   - `target_repo`: Das Repository, in dem ein Issue erstellt werden soll (Standard: das Test-Repository)
+   - `issue_title`: Titel für das zu erstellende Issue
+   - `issue_body`: Inhalt für das zu erstellende Issue
 
 2. **Jobs**:
-   - A single job that uses the GitHub App to create an issue in the target repository
+   - Ein einzelner Job, der die GitHub App verwendet, um ein Issue im Ziel-Repository zu erstellen
 
 3. **Steps**:
-   - Generate a token using the GitHub App
-   - Create an issue in the target repository using GitHub CLI
-   - Output the URL of the created issue
+   - Generiere ein Token mit der GitHub App
+   - Erstelle ein Issue im Ziel-Repository mit der GitHub CLI
+   - Gebe die URL des erstellten Issues aus
 
-## Step 7: Test the Workflow
-1. **Trigger the Workflow**:
-   - Go to Actions → External Repo Access → Run workflow
-   - Provide inputs:
-     - Target repo: `your-org/external-repo-test`
-     - Issue title: `Test issue from workflow`
-     - Issue body: `This issue was created by a GitHub Actions workflow using a GitHub App token.`
+## Schritt 7: Workflow testen
+1. **Workflow auslösen**:
+   - Gehe zu Actions → External Repo Access → Run workflow
+   - Gib die Inputs ein:
+     - Ziel-Repo: `deine-org/external-repo-test`
+     - Issue-Titel: `Test-Issue von Workflow`
+     - Issue-Body: `Dieses Issue wurde von einem GitHub Actions-Workflow mit einem GitHub App-Token erstellt.`
 
-2. **Verify Results**:
-   - Check that the workflow runs successfully
-   - Verify that an issue was created in the target repository
-   - Confirm that the issue is attributed to your GitHub App
+2. **Ergebnisse überprüfen**:
+   - Überprüfe, ob der Workflow erfolgreich durchgelaufen ist
+   - Verifiziere, dass ein Issue im Ziel-Repository erstellt wurde
+   - Bestätige, dass das Issue deiner GitHub App zugeordnet ist
 
-## Key Points and Best Practices
+## Sicherheitshinweise
+- Private Schlüssel niemals in Logs oder Code speichern
+- Tokens sind kurzlebig und werden pro Workflow-Lauf generiert
+- Berechtigungen der App so restriktiv wie möglich halten
 
-### Security Considerations
-- **Private Key Protection**: Never expose private keys in logs or code
-- **Minimal Permissions**: Only grant the permissions your app actually needs
-- **Token Lifecycle**: GitHub App tokens are short-lived (1 hour) and automatically expire
-- **Installation Scope**: Install the app only on repositories that need it
+## GitHub App vs. Personal Access Token
+- **GitHub Apps** sind bevorzugt für die Nutzung in Organisationen, weil:
+  - Sie nicht von individuellen Benutzerkonten abhängen
+  - Sie bessere Audit Trails bieten
+  - Sie granularere Berechtigungen haben
+  - Sie auf Organisationsebene verwaltet werden können
 
-### GitHub App vs. Personal Access Token
-- **GitHub Apps** are preferred for organization use because:
-  - They don't depend on individual user accounts
-  - They provide better audit trails
-  - They have more granular permissions
-  - They can be managed at the organization level
+## Erweiterte Nutzung
+Mit dem generierten Token kannst du auch private Actions aus anderen Repositories nutzen, indem du das Repository mit dem Token klonst und die Action lokal verwendest.
 
-## Troubleshooting
-### Common Issues
-1. **"App not installed" errors**: Ensure the app is installed on the target repository
-2. **Permission denied**: Check that the app has the necessary permissions
-3. **Invalid private key**: Ensure the entire key (including headers) is copied correctly
-4. **Repository not found**: Verify the repository name format (`owner/repo`)
-
-## Expected Outcome
-After completing this exercise, you should have:
-- A working GitHub App with proper permissions
-- A workflow that can authenticate using the app
-- Successfully created an issue in an external repository
-- Understanding of GitHub App security and best practices
+## Nächste Schritte
+Teste den Workflow und prüfe, ob das Issue im Ziel-Repository erstellt wird. Erweitere die App-Berechtigungen, falls du weitere Aktionen benötigst.

@@ -1,78 +1,79 @@
-# Exercise 14 Solution: Accessing External Repositories
-This directory contains the solution for Exercise 14, demonstrating how to use GitHub Apps to access external repositories in workflows.
+# Lösung: Übung 14 – Zugriff auf externe Repositories
 
-## Solution Overview
-The solution demonstrates:
-- Creating and configuring a GitHub App with appropriate permissions
-- Using the `actions/create-github-app-token@v1` action to generate authentication tokens
-- Creating issues in external repositories using GitHub CLI
-- Proper error handling and security practices
+Dieses Verzeichnis enthält die Lösung für Übung 14 und zeigt, wie man mit GitHub Apps in Workflows auf externe Repositories zugreift.
 
-## Files Included
-- `external-repo-access.yml`: Complete workflow that creates issues in external repositories using GitHub App authentication
+## Überblick
+Die Lösung demonstriert:
+- Erstellen und Konfigurieren einer GitHub App mit passenden Berechtigungen
+- Verwendung der Action `actions/create-github-app-token@v1` zur Token-Generierung
+- Erstellen von Issues in externen Repositories mit der GitHub CLI
+- Fehlerbehandlung und Sicherheitspraktiken
 
-## Key Implementation Details
-### GitHub App Configuration
-The solution assumes a GitHub App configured with:
+## Enthaltene Dateien
+- `external-repo-access.yml`: Vollständiger Workflow, der mit GitHub App-Authentifizierung Issues in externen Repositories erstellt
+
+## Wichtige Details
+### GitHub App-Konfiguration
+Die Lösung geht von einer GitHub App mit folgenden Berechtigungen aus:
 - **Repository permissions**:
   - Issues: Write
   - Metadata: Read
   - Contents: Read
-- **Installation**: Installed on target repositories
+- **Installation**: Auf Ziel-Repositories installiert
 
-### Required Secrets
-The workflow requires two repository secrets:
-- `APP_ID`: The GitHub App ID (numeric)
-- `APP_PRIVATE_KEY`: The complete private key content (including BEGIN/END headers)
+### Benötigte Secrets
+Der Workflow benötigt zwei Repository-Secrets:
+- `APP_ID`: Die GitHub App ID (numerisch)
+- `APP_PRIVATE_KEY`: Der komplette private Schlüssel (inkl. BEGIN/END)
 
-### Security Features
-- Private key is never exposed in logs
-- Token is generated fresh for each run
-- Error handling prevents sensitive data leakage
-- Proper validation of inputs and outputs
+### Sicherheitsfeatures
+- Privater Schlüssel wird nie in Logs ausgegeben
+- Token wird für jeden Lauf neu generiert
+- Fehlerbehandlung verhindert das Leaken sensibler Daten
+- Korrekte Validierung von Inputs und Outputs
 
-## How to Use This Solution
-1. **Set up GitHub App**: Follow the exercise instructions to create and configure your GitHub App
-2. **Configure Secrets**: Add `APP_ID` and `APP_PRIVATE_KEY` to your repository secrets
-3. **Deploy Workflow**: Copy the workflow file to `.github/workflows/` in your repository
-4. **Test**: Run the workflow manually with appropriate inputs
+## Nutzung der Lösung
+1. **GitHub App einrichten**: Anleitung in der Übung befolgen
+2. **Secrets konfigurieren**: `APP_ID` und `APP_PRIVATE_KEY` als Repository-Secrets anlegen
+3. **Workflow deployen**: Workflow-Datei nach `.github/workflows/` kopieren
+4. **Testen**: Workflow manuell mit passenden Inputs ausführen
 
-## Testing the Solution
-1. **Manual Trigger**:
+## Testen der Lösung
+1. **Manueller Trigger**:
    ```
-   Repository: your-org/target-repo
-   Issue Title: Test Issue from GitHub App
-   Issue Body: This demonstrates external repository access
+   Repository: deine-org/ziel-repo
+   Issue-Titel: Test-Issue von GitHub App
+   Issue-Body: Demonstration des externen Zugriffs
    ```
 
-2. **Expected Results**:
-   - Workflow completes successfully
-   - New issue appears in target repository
-   - Issue is attributed to your GitHub App
-   - Workflow output shows the issue URL
+2. **Erwartetes Ergebnis**:
+   - Workflow läuft erfolgreich durch
+   - Neues Issue erscheint im Ziel-Repository
+   - Issue wird der GitHub App zugeordnet
+   - Workflow-Ausgabe zeigt die Issue-URL
 
-## Advanced Usage
-Using the `actions/create-github-app-token@v1` action to get an app token allows you to perform many actions on other repositories like cloning them to use private custom actions that GitHub Actions does not have direct access to. Assume you have put a custom action a private repository `private-action-repo`and you want to use it in your workflow. You can use the GitHub App token to clone the repository and use the action in your workflow like this:
+## Erweiterte Nutzung
+Mit dem generierten Token kannst du auch private Actions aus anderen Repositories nutzen, indem du das Repository mit dem Token klonst und die Action lokal verwendest:
 
 ```yaml
 steps:
-  - name: Generate GitHub App Token
+  - name: GitHub App Token generieren
     id: generate-token
     uses: actions/create-github-app-token@v1
     with:
       app-id: ${{ secrets.APP_ID }}
       private-key: ${{ secrets.APP_PRIVATE_KEY }}
-      repositories: your-org/private-action-repo
+      repositories: deine-org/private-action-repo
 
-  - name: Checkout Action Repository
+  - name: Action-Repository auschecken
     uses: actions/checkout@v4
     with:
-      repository: your-org/private-action-repo
+      repository: deine-org/private-action-repo
       token: ${{ steps.generate-token.outputs.token }}
       path: private-action-repo
 
-  - name: Run Private Action Locally
+  - name: Private Action lokal ausführen
     uses: ./private-action-repo/
     with:
-      some-input: 'value'
+      some-input: 'Wert'
 ```

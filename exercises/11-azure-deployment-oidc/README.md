@@ -1,60 +1,60 @@
-# Exercise 11: Simple Workflow with Azure Deployment (OIDC)
-In this exercise, you will create a GitHub Actions workflow that deploys resources to Azure using OpenID Connect (OIDC) authentication. This approach eliminates the need to store long-lived secrets in your repository and provides enhanced security through federated identity credentials.
+# Übung 11: Einfacher Workflow mit Azure Deployment (OIDC)
+In dieser Übung erstellst du einen GitHub Actions Workflow, der Ressourcen in Azure mit OpenID Connect (OIDC) bereitstellt. Dieser Ansatz macht das Speichern von langfristigen Secrets im Repository überflüssig und bietet durch föderierte Identitäten erhöhte Sicherheit.
 
-## Prerequisites
-- **Completion of Exercise 10 (Service Principal authentication)**
-- A GitHub account and a repository for this exercise
-- An Azure subscription with permissions to create resources and manage federated credentials
-- Azure CLI installed locally (for setup steps)
+## Voraussetzungen
+- **Abschluss von Übung 10 (Service Principal Authentifizierung)**
+- Ein GitHub-Account und ein Repository für diese Übung
+- Ein Azure-Abonnement mit Berechtigungen zum Erstellen von Ressourcen und Verwalten von föderierten Anmeldeinformationen
+- Azure CLI lokal installiert (für die Setup-Schritte)
 
-## Learning Objectives
-By the end of this exercise, you will be able to:
-- Understand the benefits of OIDC authentication over service principal secrets
-- Configure federated identity credentials in Azure
-- Set up OIDC authentication for GitHub Actions
-- Deploy Azure resources using OIDC authentication
-- Understand the security advantages of federated authentication
+## Lernziele
+Am Ende dieser Übung kannst du:
+- Die Vorteile von OIDC gegenüber Service Principal Secrets verstehen
+- Föderierte Identitätsanmeldeinformationen in Azure konfigurieren
+- OIDC-Authentifizierung für GitHub Actions einrichten
+- Azure-Ressourcen mit OIDC bereitstellen
+- Die Sicherheitsvorteile von föderierter Authentifizierung verstehen
 
-## Overview
-This exercise will guide you through:
-1. Understanding OIDC and federated identity
-2. Creating an Azure AD application and configuring federated credentials
-3. Setting up repository variables and secrets for OIDC
-4. Creating a workflow that uses OIDC authentication
-5. Comparing OIDC with service principal authentication
+## Überblick
+Diese Übung führt dich durch:
+1. Verständnis von OIDC und föderierter Identität
+2. Erstellen einer Azure AD-Anwendung und Konfigurieren von föderierten Anmeldeinformationen
+3. Einrichten von Repository-Variablen und -Secrets für OIDC
+4. Erstellen eines Workflows, der OIDC-Authentifizierung nutzt
+5. Vergleich OIDC vs. Service Principal
 
-## What is OIDC Authentication?
-OpenID Connect (OIDC) allows GitHub Actions to authenticate with Azure using short-lived tokens instead of long-lived secrets. This approach:
+## Was ist OIDC-Authentifizierung?
+OpenID Connect (OIDC) ermöglicht es GitHub Actions, sich mit Azure über kurzlebige Tokens statt langfristiger Secrets zu authentifizieren. Das bedeutet:
 
-- **Eliminates secret storage:** No need to store service principal secrets in GitHub
-- **Improves security:** Uses short-lived tokens that are automatically rotated
-- **Reduces maintenance:** No need to manually rotate credentials
-- **Provides better auditing:** More detailed authentication logs
+- **Kein Secret-Speichern:** Keine Notwendigkeit, Service Principal-Secrets in GitHub zu speichern
+- **Mehr Sicherheit:** Kurzlebige Tokens, die automatisch rotiert werden
+- **Weniger Wartung:** Keine manuelle Rotation von Zugangsdaten
+- **Bessere Nachvollziehbarkeit:** Detaillierte Authentifizierungsprotokolle
 
-## Step 1: Create Azure AD Application and Service Principal (if you haven't completed Exercise 10)
+## Schritt 1: Azure AD-Anwendung und Service Principal erstellen (falls nicht in Übung 10 erledigt)
 
-### 1.1 Login to Azure CLI
-Open your terminal or command prompt and login to Azure:
+### 1.1 Anmeldung bei der Azure CLI
+Öffne dein Terminal oder die Eingabeaufforderung und melde dich bei Azure an:
 
 ```bash
 az login
 ```
 
-### 1.2 Set your subscription (if you have multiple)
+### 1.2 Setze dein Abonnement (falls du mehrere hast)
 ```bash
-az account set --subscription "Your Subscription Name or ID"
+az account set --subscription "Dein Abonnementname oder ID"
 ```
 
-### 1.3 Create a service principal
-Create a service principal with contributor access to your subscription:
+### 1.3 Erstelle einen Service Principal
+Erstelle einen Service Principal mit Contributor-Zugriff auf dein Abonnement:
 
 ```bash
 az ad sp create-for-rbac --name "github-actions-sp" --role contributor --scopes /subscriptions/{subscription-id} --create-password false
 ```
 
-**Note:** If multiple people are running this exercise in the same Entra ID tenant, you may want to use a unique name for your service principal to avoid conflicts. You can append your GitHub username or a random string to the name.
+**Hinweis:** Wenn mehrere Personen in demselben Entra ID-Mandanten an dieser Übung teilnehmen, solltest du möglicherweise einen eindeutigen Namen für deinen Service Principal verwenden, um Konflikte zu vermeiden. Du kannst deinen GitHub-Benutzernamen oder eine zufällige Zeichenfolge an den Namen anhängen.
 
-Replace `{subscription-id}` with your actual subscription ID. You can find your subscription ID by running:
+Ersetze `{subscription-id}` durch deine tatsächliche Abonnement-ID. Du kannst deine Abonnement-ID finden, indem du folgendes ausführst:
 
 ```bash
 az account show --query id --output tsv
@@ -62,7 +62,7 @@ az account show --query id --output tsv
   --scope /subscriptions/{subscription-id}
 ```
 
-The output should look like this:
+Die Ausgabe sieht so aus:
 ```json
 {
   "appId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
@@ -72,11 +72,11 @@ The output should look like this:
 }
 ```
 
-## Step 2: Configure Federated Identity Credentials
-Federated identity credentials allow the Azure AD application to trust tokens from GitHub Actions. This trust relationship is tightly coupled with your GitHub repository and branch or other contexts, depending on whether your workflow simply runs for a branch, a tag, a pull request, a specific environment, or even executes a reusable workflow. If you want to learn about the different subject claims, you can refer to the [GitHub documentation on OIDC](https://docs.github.com/en/actions/concepts/security/about-security-hardening-with-openid-connect#example-subject-claims).
+## Schritt 2: Föderierte Anmeldeinformationen konfigurieren
+Föderierte Anmeldeinformationen erlauben der Azure AD-Anwendung, Tokens von GitHub Actions zu vertrauen. Die Vertrauensstellung ist eng mit deinem GitHub-Repository und Branch verknüpft. Mehr dazu in der [GitHub OIDC-Dokumentation](https://docs.github.com/en/actions/concepts/security/about-security-hardening-with-openid-connect#example-subject-claims).
 
-### Create federated credentials for main branch
-For this exercise, we will just create a federated credential for the main branch. Run the following command:
+### Föderierte Anmeldeinformationen für den main-Branch erstellen
+Für diese Übung erstellen wir nur eine föderierte Anmeldeinformation für den Haupt-Branch. Führe den folgenden Befehl aus:
 
 ```bash
 az ad app federated-credential create \
@@ -85,70 +85,40 @@ az ad app federated-credential create \
     "name": "github-actions-main",
     "issuer": "https://token.actions.githubusercontent.com",
     "subject": "repo:{github-username}/{repository-name}:ref:refs/heads/main",
-    "description": "GitHub Actions OIDC for main branch",
+    "description": "GitHub Actions OIDC für den Haupt-Branch",
     "audiences": ["api://AzureADTokenExchange"]
   }'
 ```
 
-## Step 3: Configure Repository Variables
-Remember that with OIDC, you don't need to store any secrets in your repository. Instead, you will use repository variables to store the necessary information for the workflow. Go to your repository → Settings → Secrets and variables → Actions → Variables tab:
+## Schritt 3: Repository-Variablen konfigurieren
+Denke daran, dass du mit OIDC keine Secrets in deinem Repository speichern musst. Stattdessen verwendest du Repository-Variablen, um die erforderlichen Informationen für den Workflow zu speichern. Gehe zu deinem Repository → Einstellungen → Secrets und Variablen → Aktionen → Registerkarte Variablen:
 
 1. **Name:** `AZURE_CLIENT_ID`
-   **Value:** The `appId` from step 1.3
+   **Wert:** Die `appId` aus Schritt 1.3
 
 2. **Name:** `AZURE_TENANT_ID`
-   **Value:** The `tenant` from step 1.3
+   **Wert:** Die `tenant` aus Schritt 1.3
 
 3. **Name:** `AZURE_SUBSCRIPTION_ID`
-   **Value:** Your Azure subscription ID
+   **Wert:** Deine Azure-Abonnement-ID
 
 
-## Step 4: Updating the Workflow
-Reuse the workflow you created in exercise 10 (or use the solution provided in the `solutions/10-azure-deployment-sp` directory) and modify it to use OIDC authentication instead of service principal authentication. To do so, simply change the inputs of the `azure/login` action from `creds` to `client-id`, `tenant-id`, and `subscription-id`. If you want to, you can also remove the `AZURE_CREDENTIALS` secret from your repository since it is no longer needed (note, this breaks the workflow from exercise 10, in case you make a copy for this exercise).
+## Schritt 4: Workflow erstellen
+Erstelle eine Workflow-Datei `.github/workflows/azure-deployment-oidc.yml`, die OIDC-Authentifizierung verwendet und Ressourcen bereitstellt.
 
-OIDC authentication requires additional permissions for the workflow, which are not included by default. Remember to add the `permissions` section to your workflow file and include `id-token: write` permission. This allows the workflow to request an OIDC token from GitHub.
+## Sicherheitshinweis
+- Keine langfristigen Secrets im Repository
+- Kurzlebige Tokens werden automatisch rotiert
+- Zugriff kann granular über Azure und GitHub gesteuert werden
 
-## Step 5: Test the OIDC Workflow
-Trigger the workflow and provide names for the resources (e.g., `rg-github-actions-workshop`, `sagithubactions`, `sampledata`).
+## Vergleich: OIDC vs. Service Principal
+| Feature | Service Principal | OIDC |
+|---------|------------------|------|
+| Setup-Komplexität | Einfach | Mittel |
+| Secret-Management | Erforderlich | Nicht erforderlich |
+| Sicherheit | Gut | Exzellent |
+| Wartung | Regelmäßige Rotation | Minimal |
+| Token-Lebensdauer | Lang | Kurz |
 
-Watch the workflow execution and verify that:
-- The login step succeeds - watch for the message indicating that OIDC authentication is used
-  - If the login failed, you likely forgot to add the `id-token: write` permission to your workflow (see above)
-- The resource group is created
-- The storage account is created
-- The storage container is created
-- All resources are listed at the end
-
-## Step 6: Verify in Azure Portal
-
-1. Go to the [Azure Portal](https://portal.azure.com)
-2. Navigate to Resource Group
-3. Find the resource group created by your workflow
-4. Verify that the storage account and container were created successfully
-
-## Step 7: Clean Up (Optional)
-To avoid Azure charges, you can create a cleanup workflow or manually delete the resources:
-
-### Manual cleanup:
-```bash
-az group delete --name {your-resource-group-name} --yes --no-wait
-```
-
-Replace `{your-resource-group-name}` with the name of the resource group you created.
-
-### Automatic cleanup (optional)
-If you have more time, add a cleanup job to your workflow that deletes the resources after the deployment is verified. Use an environment with an approval by yourself for this job to ensure that you have enough time to verify the resources before they are deleted.
-
-## Additional Resources
-
-- [GitHub OIDC documentation](https://docs.github.com/en/actions/deployment/security-hardening-your-deployments/about-security-hardening-with-openid-connect)
-- [Azure federated identity credentials](https://docs.microsoft.com/en-us/azure/active-directory/develop/workload-identity-federation)
-- [azure/login action OIDC documentation](https://github.com/Azure/login#login-with-openid-connect-oidc-recommended)
-- [Azure Bicep documentation](https://docs.microsoft.com/en-us/azure/azure-resource-manager/bicep/)
-
-## Key Takeaways
-- OIDC provides enhanced security by eliminating long-lived secrets
-- Federated identity credentials enable trust between GitHub and Azure
-- Short-lived tokens reduce security risks and maintenance overhead
-- OIDC requires more initial setup but provides better long-term security
-- This approach is recommended for production deployments
+## Nächste Schritte
+Nach dieser Übung kannst du deine Workflows noch sicherer und wartungsärmer gestalten!

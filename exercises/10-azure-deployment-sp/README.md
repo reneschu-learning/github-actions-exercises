@@ -1,58 +1,58 @@
-# Exercise 10: Simple Workflow with Azure Deployment (Service Principal)
-In this exercise, you will create a GitHub Actions workflow that deploys resources to Azure using a service principal for authentication. You'll learn how to create and configure a service principal, set up repository secrets, and deploy Azure resources using GitHub Actions.
+# Übung 10: Einfacher Workflow mit Azure Deployment (Service Principal)
+In dieser Übung erstellst du einen GitHub Actions Workflow, der Ressourcen in Azure mit einem Service Principal für die Authentifizierung bereitstellt. Du lernst, wie man einen Service Principal erstellt und konfiguriert, Repository-Secrets einrichtet und Azure-Ressourcen mit GitHub Actions bereitstellt.
 
-## Prerequisites
-- An Azure subscription with permissions to create resources and service principals
-- Azure CLI installed locally (for setup steps)
+## Voraussetzungen
+- Ein Azure-Abonnement mit Berechtigungen zum Erstellen von Ressourcen und Service Principals
+- Azure CLI lokal installiert (für die Setup-Schritte)
 
-## Learning Objectives
-By the end of this exercise, you will be able to:
-- Create and configure an Azure service principal for GitHub Actions
-- Set up repository secrets for secure authentication
-- Use the `azure/login` action to authenticate with Azure
-- Deploy Azure resources using GitHub Actions
-- Understand the security considerations of service principal authentication
+## Lernziele
+Am Ende dieser Übung kannst du:
+- Einen Azure Service Principal für GitHub Actions erstellen und konfigurieren
+- Repository-Secrets für sichere Authentifizierung einrichten
+- Die Action `azure/login` zur Authentifizierung mit Azure verwenden
+- Azure-Ressourcen mit GitHub Actions bereitstellen
+- Die Sicherheitsaspekte der Service Principal-Authentifizierung verstehen
 
-## Overview
-This exercise will guide you through:
-1. Creating a service principal in Azure
-2. Configuring repository secrets in GitHub
-3. Creating a workflow that deploys basic Azure resources
-4. Understanding service principal permissions and security
+## Überblick
+Diese Übung führt dich durch:
+1. Erstellen eines Service Principals in Azure
+2. Konfigurieren von Repository-Secrets in GitHub
+3. Erstellen eines Workflows, der grundlegende Azure-Ressourcen bereitstellt
+4. Verstehen der Berechtigungen und Sicherheit eines Service Principals
 
-## Step 1: Create an Azure Service Principal
-First, you need to create a service principal that GitHub Actions can use to authenticate with Azure.
+## Schritt 1: Erstelle einen Azure Service Principal
+Zuerst musst du einen Service Principal erstellen, den GitHub Actions zur Authentifizierung mit Azure verwenden kann.
 
-### 1.1 Login to Azure CLI
-Open your terminal or command prompt and login to Azure:
+### 1.1 Anmeldung bei der Azure CLI
+Öffne dein Terminal oder die Eingabeaufforderung und melde dich bei Azure an:
 
 ```bash
 az login
 ```
 
-### 1.2 Set your subscription (if you have multiple)
+### 1.2 Setze dein Abonnement (falls du mehrere hast)
 ```bash
-az account set --subscription "Your Subscription Name or ID"
+az account set --subscription "Dein Abonnementname oder ID"
 ```
 
-### 1.3 Create a service principal
-Create a service principal with contributor access to your subscription:
+### 1.3 Erstelle einen Service Principal
+Erstelle einen Service Principal mit Contributor-Rechten für dein Abonnement:
 
 ```bash
 az ad sp create-for-rbac --name "github-actions-sp" --role contributor --scopes /subscriptions/{subscription-id} --json-auth
 ```
 
-**Note:** If multiple people are running this exercise in the same Entra ID tenant, you may want to use a unique name for your service principal to avoid conflicts. You can append your GitHub username or a random string to the name.
+**Hinweis:** Wenn mehrere Personen diese Übung im selben Entra ID Tenant durchführen, verwende einen eindeutigen Namen für deinen Service Principal (z.B. mit GitHub-Benutzernamen oder Zufallsstring).
 
-Replace `{subscription-id}` with your actual subscription ID. You can find your subscription ID by running:
+Ersetze `{subscription-id}` durch deine tatsächliche Abonnement-ID. Du findest sie mit:
 
 ```bash
 az account show --query id --output tsv
 ```
 
-**Important:** Save the JSON output from the service principal creation command. You'll need it in the next step.
+**Wichtig:** Speichere die JSON-Ausgabe des Befehls, du benötigst sie im nächsten Schritt.
 
-The output should look like this:
+Die Ausgabe sieht so aus:
 ```json
 {
   "clientId": "xxxxxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx",
@@ -68,108 +68,108 @@ The output should look like this:
 }
 ```
 
-## Step 2: Configure Repository Secrets
-Now you need to add the service principal credentials to your GitHub repository as secrets.
+## Schritt 2: Repository-Secrets konfigurieren
+Jetzt musst du die Service Principal-Zugangsdaten als Secrets in deinem GitHub-Repository speichern.
 
-### 2.1 Navigate to your repository settings
-1. Go to your GitHub repository
-2. Click on **Settings** tab
-3. In the left sidebar, click on **Secrets and variables** → **Actions**
+### 2.1 Navigiere zu den Repository-Einstellungen
+1. Gehe zu deinem GitHub-Repository
+2. Klicke auf den Tab **Settings**
+3. In der linken Seitenleiste: **Secrets and variables → Actions**
 
-### 2.2 Add repository secrets
-Click **New repository secret** and add the following secrets:
+### 2.2 Repository-Secrets hinzufügen
+Klicke auf **New repository secret** und füge folgende Secrets hinzu:
 
 1. **Name:** `AZURE_CREDENTIALS`
-   **Value:** The entire JSON output from the service principal creation command
+   **Wert:** Die gesamte JSON-Ausgabe aus Schritt 1.3
 
-   **Note:** The `azure/login` action just needs the `clientId`, `clientSecret`, `tenantId`, and `subscriptionId` fields from the JSON. The rest of the JSON structure will be ignored. If you want to, you can remove the unnecessary fields to keep it clean.
+   **Hinweis:** Die Action `azure/login` benötigt nur `clientId`, `clientSecret`, `tenantId` und `subscriptionId` aus dem JSON. Die restlichen Felder können entfernt werden.
 
-2. **Name:** `AZURE_SUBSCRIPTION_ID` (optional - not needed for the exercise)
-   **Value:** Your Azure subscription ID
+2. **Name:** `AZURE_SUBSCRIPTION_ID` (optional)
+   **Wert:** Deine Azure-Abonnement-ID
 
-   **Note:** You don't need to create your subscription ID as a secret since it is not sensitive information. If you want to, you can create a repository variable instead or extract it from the `AZURE_CREDENTIALS` secret in your workflow using the `fromJson` function.
+   **Hinweis:** Die Subscription-ID ist nicht sensibel und kann auch als Repository-Variable gespeichert werden.
 
-**Note:** In most real-world scenarios, you would usually put these secrets in an environment to ensure that different identities are used based on the target environment (e.g., dev, staging, prod).
+**Hinweis:** In der Praxis werden Secrets meist in Environments gespeichert, um verschiedene Identitäten je nach Zielumgebung zu nutzen (z.B. dev, staging, prod).
 
-## Step 3: Create the Workflow
-Create a workflow file `.github/workflows/azure-deployment-sp.yml` with the following content:
+## Schritt 3: Workflow erstellen
+Erstelle eine Workflow-Datei `.github/workflows/azure-deployment-sp.yml` mit folgendem Inhalt:
 
-### 3.1 Triggers
-Configure the workflow to be triggered manually with inputs for resource group name, storage account name, and storage container name.
+### 3.1 Trigger
+Konfiguriere den Workflow für einen manuellen Trigger mit Inputs für Resource Group Name, Storage Account Name und Storage Container Name.
 
-### 3.2 Workflow Content
-1. Authenticate with Azure using the [azure/login@v2](https://github.com/Azure/login/tree/v2?tab=readme-ov-file#login-with-a-service-principal-secret) action
-2. Create a resource group using the Azure CLI
-3. Create a storage account within the resource group and a container within that account
-4. List the resources created for verification
+### 3.2 Workflow-Inhalt
+1. Authentifiziere dich bei Azure mit der [azure/login@v2](https://github.com/Azure/login/tree/v2?tab=readme-ov-file#login-with-a-service-principal-secret) Action
+2. Erstelle eine Resource Group mit der Azure CLI
+3. Erstelle ein Storage-Konto innerhalb der Resource Group und einen Container innerhalb dieses Kontos
+4. Liste die erstellten Ressourcen zur Überprüfung auf
 
-## Step 4: Test the Workflow
-Trigger the workflow and provide names for the resources (e.g., `rg-github-actions-workshop`, `sagithubactions`, `sampledata`).
+## Schritt 4: Teste den Workflow
+Trigger den Workflow und gib Namen für die Ressourcen an (z.B. `rg-github-actions-workshop`, `sagithubactions`, `sampledata`).
 
-Watch the workflow execution and verify that:
-- The login step succeeds
-- The resource group is created
-- The storage account is created
-- The storage container is created
-- All resources are listed at the end
+Beobachte die Ausführung des Workflows und überprüfe, ob:
+- Der Anmeldeschritt erfolgreich ist
+- Die Resource Group erstellt wird
+- Das Storage-Konto erstellt wird
+- Der Storage-Container erstellt wird
+- Alle Ressourcen am Ende aufgelistet werden
 
-## Step 5: Verify in Azure Portal
+## Schritt 5: Überprüfen im Azure Portal
 
-1. Go to the [Azure Portal](https://portal.azure.com)
-2. Navigate to Resource Group
-3. Find the resource group created by your workflow
-4. Verify that the storage account and container were created successfully
+1. Gehe zum [Azure Portal](https://portal.azure.com)
+2. Navigiere zur Resource Group
+3. Finde die von deinem Workflow erstellte Resource Group
+4. Überprüfe, ob das Storage-Konto und der Container erfolgreich erstellt wurden
 
-## Step 6: Clean Up (Optional)
-To avoid Azure charges, you can create a cleanup workflow or manually delete the resources:
+## Schritt 6: Bereinigung (Optional)
+Um Azure-Kosten zu vermeiden, kannst du einen Bereinigungs-Workflow erstellen oder die Ressourcen manuell löschen:
 
-### Manual cleanup:
+### Manuelle Bereinigung:
 ```bash
 az group delete --name {your-resource-group-name} --yes --no-wait
 ```
 
-Replace `{your-resource-group-name}` with the name of the resource group you created.
+Ersetze `{your-resource-group-name}` durch den Namen der von dir erstellten Resource Group.
 
-### Automatic cleanup (optional)
-If you have more time, add a cleanup job to your workflow that deletes the resources after the deployment is verified. Use an environment with an approval by yourself for this job to ensure that you have enough time to verify the resources before they are deleted.
+### Automatische Bereinigung (optional)
+Wenn du mehr Zeit hast, füge einen Bereinigungsjob zu deinem Workflow hinzu, der die Ressourcen löscht, nachdem die Bereitstellung überprüft wurde. Verwende ein Environment mit einer Genehmigung von dir für diesen Job, um sicherzustellen, dass du genügend Zeit hast, die Ressourcen zu überprüfen, bevor sie gelöscht werden.
 
-## Security Considerations
-When using service principals for authentication:
+## Sicherheitshinweise
+Bei der Verwendung von Service Principals zur Authentifizierung:
 
-1. **Principle of Least Privilege:** Only grant the minimum permissions necessary
-2. **Credential Rotation:** Regularly rotate service principal secrets
-3. **Secret Management:** Never commit secrets to your repository
-4. **Monitoring:** Monitor service principal usage and access patterns
-5. **Scope Limitation:** Limit service principal scope to specific resource groups when possible
+1. **Prinzip der geringsten Berechtigung:** Gewähre nur die minimal erforderlichen Berechtigungen
+2. **Geheimnisrotation:** Drehe regelmäßig die Secrets des Service Principals
+3. **Geheimnisverwaltung:** Speichere keine Secrets im Repository
+4. **Überwachung:** Überwache die Nutzung und Zugriffs Muster des Service Principals
+5. **Einschränkung des Zugriffs:** Beschränke den Zugriff des Service Principals auf bestimmte Resource Groups, wenn möglich
 
-However, even with these considerations, workflows that use service principals with client ID and secret are still vulnerable to credential theft/leakage. Thus, try to avoid using secrets for your deployments and move to flows like OpenID Connect (OIDC) authentication. 
+Denke daran, dass Workflows, die Service Principals mit Client-ID und Secret verwenden, anfällig für Geheimnisdiebstahl/-leckagen sind. Vermeide nach Möglichkeit die Verwendung von Secrets für deine Bereitstellungen und wechsle zu sichereren Methoden wie der OpenID Connect (OIDC) Authentifizierung.
 
-## Next Steps
-In the next exercise (Exercise 11), you'll learn how to use OpenID Connect (OIDC) authentication, which eliminates the need to store secrets and provides better security.
+## Nächste Schritte
+In der nächsten Übung lernst du, wie du OpenID Connect (OIDC) Authentifizierung verwendest, die die Speicherung von Secrets überflüssig macht und eine bessere Sicherheit bietet.
 
-## Troubleshooting
-### Common Issues:
-1. **Authentication failures:** Verify that your `AZURE_CREDENTIALS` secret contains the complete JSON output
-2. **Permission errors:** Ensure the service principal has the necessary permissions
-3. **Resource naming conflicts:** Storage account names must be globally unique
-4. **Subscription access:** Verify that the service principal has access to the correct subscription
+## Fehlerbehebung
+### Häufige Probleme:
+1. **Authentifizierungsfehler:** Überprüfe, ob dein Secret `AZURE_CREDENTIALS` die vollständige JSON-Ausgabe enthält
+2. **Berechtigungsfehler:** Stelle sicher, dass der Service Principal die erforderlichen Berechtigungen hat
+3. **Namenskonflikte bei Ressourcen:** Die Namen von Storage-Konten müssen global eindeutig sein
+4. **Zugriff auf das Abonnement:** Überprüfe, ob der Service Principal Zugriff auf das richtige Abonnement hat
 
-### Useful commands for debugging:
+### Nützliche Befehle zur Fehlersuche:
 
 ```bash
-# Check current Azure context
+# Aktuellen Azure-Kontext überprüfen
 az account show
 
-# List service principals
+# Service Principals auflisten
 az ad sp list --display-name "github-actions-sp"
 
-# Check service principal permissions
+# Berechtigungen des Service Principals überprüfen
 az role assignment list --assignee {service-principal-id}
 ```
 
-## Additional Resources
+## Zusätzliche Ressourcen
 
-- [Azure Service Principal documentation](https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals)
-- [azure/login action documentation](https://github.com/Azure/login)
-- [GitHub Actions secrets documentation](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
-- [Azure CLI reference](https://docs.microsoft.com/en-us/cli/azure/)
+- [Dokumentation zu Azure Service Principal](https://docs.microsoft.com/en-us/azure/active-directory/develop/app-objects-and-service-principals)
+- [Dokumentation zur azure/login Action](https://github.com/Azure/login)
+- [Dokumentation zu GitHub Actions Secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets)
+- [Azure CLI Referenz](https://docs.microsoft.com/en-us/cli/azure/)

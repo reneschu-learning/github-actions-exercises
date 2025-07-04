@@ -1,50 +1,50 @@
-# Solution: Multiple Jobs
+# Lösung: Mehrere Jobs
 
-This directory contains the solution for Exercise 6: Multiple Jobs.
+Dieses Verzeichnis enthält die Lösung für Übung 7: Mehrere Jobs.
 
-## Files
-- `multi-job-pipeline.yml` - Sample multi-job CI/CD pipeline workflow
-- `multi-job-pipeline-with-failures.yml` - Sample multi-job CI/CD pipeline workflow and error simulation
+## Dateien
+- `multi-job-pipeline.yml` – Beispiel für einen Multi-Job CI/CD-Workflow
+- `multi-job-pipeline-with-failures.yml` – Beispiel für Multi-Job-Workflow mit Fehler-Simulation
 
-## Key Features
-- Six-job CI/CD pipeline simulation
-- Job dependencies and sequencing
-- Parallel test execution
-- Job outputs and inter-job communication
-- Conditional deployment
-- Matrix strategy for multi-OS testing
-- Always-running cleanup job
+## Wichtige Merkmale
+- Sechs-Job CI/CD-Pipeline-Simulation
+- Job-Abhängigkeiten und Reihenfolge
+- Parallele Testausführung
+- Job-Outputs und Kommunikation zwischen Jobs
+- Bedingtes Deployment
+- Matrix-Strategie für Multi-OS-Tests
+- Cleanup-Job, der immer läuft
 
-## Job Flow
+## Job-Ablauf
 ```
 Setup → Tests (parallel) → Build → Deploy → Cleanup
         ├─ Unit Tests
         └─ Linting (multi-OS)
 ```
 
-## Job Dependencies
-- Tests depend on Setup
-- Build depends on all Tests
-- Deploy depends on Setup + Build
-- Cleanup always runs (depends on all)
+## Job-Abhängigkeiten
+- Tests hängen von Setup ab
+- Build hängt von allen Tests ab
+- Deploy hängt von Setup + Build ab
+- Cleanup läuft immer (hängt von allen ab)
 
-## Advanced Features
-- Job outputs (`VERSION`, `deploy`)
-- Matrix strategy for OS testing
-- Conditional deployment based on branch
-- Comprehensive status reporting
+## Erweiterte Features
+- Job-Outputs (`VERSION`, `deploy`)
+- Matrix-Strategie für OS-Tests
+- Bedingtes Deployment je nach Branch
+- Umfassendes Status-Reporting
 
-## Usage
-1. Copy the workflow file to `.github/workflows/` in your repository
-2. Commit and push the changes
-3. Trigger workflow
-4. Observe job execution order and parallel processing
+## Verwendung
+1. Kopiere die Workflow-Datei nach `.github/workflows/` in deinem Repository
+2. Committe und pushe die Änderungen
+3. Starte den Workflow
+4. Beobachte die Ausführungsreihenfolge und parallele Verarbeitung
 
-## What You'll Learn
-- Multi-job workflow design
-- Job dependencies with `needs:`
-- Parallel vs sequential execution
-- Job outputs and communication
-- Matrix strategies
-- Conditional job execution
-- Production deployment patterns
+## Was du lernst
+- Multi-Job-Workflow-Design
+- Job-Abhängigkeiten mit `needs:`
+- Parallele vs. sequentielle Ausführung
+- Job-Outputs und Kommunikation
+- Matrix-Strategien
+- Bedingte Job-Ausführung
+- Produktionsnahe Deployment-Muster

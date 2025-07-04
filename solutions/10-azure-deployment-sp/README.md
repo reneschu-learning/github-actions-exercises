@@ -1,45 +1,45 @@
-# Exercise 10 Solution: Azure Deployment with Service Principal
+# Lösung: Übung 10 – Azure Deployment mit Service Principal
 
-This directory contains the solution for Exercise 10, which demonstrates how to deploy Azure resources using GitHub Actions with service principal authentication.
+Dieses Verzeichnis enthält die Lösung für Übung 10, in der gezeigt wird, wie Azure-Ressourcen mit GitHub Actions und Service Principal-Authentifizierung bereitgestellt werden.
 
-## Solution Overview
+## Überblick
 
-The solution includes:
-- A GitHub Actions workflow that authenticates using a service principal
-- Deployment of basic Azure resources (resource group, storage account, container)
-- Proper secret management and security practices
+Die Lösung umfasst:
+- Einen GitHub Actions Workflow, der sich mit einem Service Principal authentifiziert
+- Bereitstellung von Azure-Ressourcen (Resource Group, Storage Account, Container)
+- Korrektes Secret-Management und Sicherheitspraktiken
 
-## Workflows in this Solution
+## Workflows in dieser Lösung
 - `azure-deployment-sp.yml`  
-  The main workflow file that demonstrates service principal authentication and resource deployment.
+  Haupt-Workflow, der Service Principal-Authentifizierung und Deployment demonstriert
 - `azure-deployment-sp-with-cleanup.yml`  
-  An extended workflow that includes cleanup steps for resource deletion after deployment.
+  Erweiterter Workflow mit Aufräum-Schritten zum Löschen der Ressourcen nach dem Deployment
 
-## Key Learning Points
+## Wichtige Lernpunkte
 
-### 1. Service Principal Authentication
-- Uses `azure/login` action with stored credentials
-- Requires the `AZURE_CREDENTIALS` secret with full JSON configuration
-- Provides immediate access but requires secret management
+### 1. Service Principal Authentifizierung
+- Verwendet die Action `azure/login` mit gespeicherten Zugangsdaten
+- Benötigt das Secret `AZURE_CREDENTIALS` mit vollständiger JSON-Konfiguration
+- Bietet sofortigen Zugriff, erfordert aber Secret-Management
 
-### 2. Resource Deployment Pattern
-- Creates resources using Azure CLI commands
-- Implements proper tagging for resource management
-- Includes verification steps
+### 2. Ressourcenbereitstellung
+- Erstellt Ressourcen mit Azure CLI-Befehlen
+- Setzt sinnvolle Tags für das Ressourcenmanagement
+- Enthält Verifikationsschritte
 
-### 3. Security Considerations
-- All sensitive information stored in GitHub secrets
-- Service principal follows principle of least privilege
-- No hardcoded credentials in workflow files
+### 3. Sicherheitsaspekte
+- Alle sensiblen Informationen werden als GitHub Secrets gespeichert
+- Service Principal folgt dem Prinzip der minimalen Rechtevergabe
+- Keine hartkodierten Zugangsdaten in Workflow-Dateien
 
-## Comparison with OIDC
-| Feature | Service Principal | OIDC (Exercise 11) |
+## Vergleich mit OIDC
+| Feature | Service Principal | OIDC (Übung 11) |
 |---------|------------------|-------------------|
-| Setup Complexity | Simple | Moderate |
-| Secret Management | Required | Not Required |
-| Security | Good | Excellent |
-| Maintenance | Regular rotation | Minimal |
-| Token Lifetime | Long-lived | Short-lived |
+| Setup-Komplexität | Einfach | Mittel |
+| Secret-Management | Erforderlich | Nicht erforderlich |
+| Sicherheit | Gut | Exzellent |
+| Wartung | Regelmäßige Rotation | Minimal |
+| Token-Lebensdauer | Lang | Kurz |
 
-## Next Steps
-After completing this exercise, proceed to Exercise 11 to learn about OIDC authentication, which provides enhanced security and eliminates the need for stored secrets.
+## Nächste Schritte
+Nach dieser Übung kannst du mit Übung 11 fortfahren, um OIDC-Authentifizierung kennenzulernen, die noch mehr Sicherheit bietet und keine gespeicherten Secrets benötigt.

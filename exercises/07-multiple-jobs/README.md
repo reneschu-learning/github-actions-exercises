@@ -1,85 +1,86 @@
-# Exercise 6: Multiple Jobs
+# Übung 7: Mehrere Jobs
 
-## Objective
-Learn how to create workflows with multiple jobs, understand job dependencies, control parallel vs sequential execution, and use job-level conditions.
+## Ziel
+Lerne, wie du Workflows mit mehreren Jobs erstellst, Job-Abhängigkeiten verstehst, parallele vs. sequentielle Ausführung steuerst und Bedingungen auf Job-Ebene verwendest.
 
-## Instructions
+## Anleitung
 
-1. **Create a multi-job workflow**: Design a workflow that simulates a CI/CD pipeline with:
-   - **Setup job**: Validates the environment and prepares for other jobs  
-     This job should run on `ubuntu-latest` and do three things:
-     - Print the Node.js and npm versions
-     - Generate a `VERSION` output that is set to `1.0.<workflow run number>`
-     - Generate a `deploy` output that is set to `true` if the current branch is `main`, otherwise `false`
-   - **Test jobs**: Multiple jobs that can run in parallel (tests, linting)  
-     - The test job should run on `ubuntu-latest` and simulate running tests (output some message and sleep for a few seconds).
-     - The linting job should be a matrix job that runs on `ubuntu-latest` and `windows-latest`, simulating linting code (output some message and sleep for a few seconds).
-   - **Build job**: Builds the application (depends on tests passing)  
-     The build job should run on `ubuntu-latest` and create an artifact file (just use touch to create a file) and an output that contains the artifact name. It should then upload the artifact to GitHub Actions.
-   - **Deploy job**: Deploys the application (depends on build completing)  
-     The deploy job should run on `ubuntu-latest` and only run if the `deploy` output from the setup job is `true`. It should download the artifact, list the file, and simulate deployment by outputting a message and sleeping for a few seconds.
-   - **Cleanup job**: Always runs at the end, regardless of previous job outcomes  
-     The cleanup job should run on `ubuntu-latest` and output a message and the results of previous jobs.
+1. **Erstelle einen Multi-Job-Workflow**: Entwirf einen Workflow, der eine CI/CD-Pipeline simuliert mit:
+   - **Setup-Job**: Validiert die Umgebung und bereitet andere Jobs vor  
+     Dieser Job läuft auf `ubuntu-latest` und soll:
+     - Die Node.js- und npm-Versionen ausgeben
+     - Ein `VERSION`-Output erzeugen, z.B. `1.0.<workflow run number>`
+     - Ein `deploy`-Output erzeugen, das auf `true` steht, wenn der aktuelle Branch `main` ist, sonst `false`
+   - **Test-Jobs**: Mehrere Jobs, die parallel laufen können (Tests, Linting)  
+     - Der Test-Job läuft auf `ubuntu-latest` und simuliert Tests (gibt eine Nachricht aus und schläft ein paar Sekunden)
+     - Der Linting-Job ist ein Matrix-Job, der auf `ubuntu-latest` und `windows-latest` läuft, simuliert Linting (gibt eine Nachricht aus und schläft)
+   - **Build-Job**: Baut die Anwendung (hängt von Tests ab)  
+     Läuft auf `ubuntu-latest`, erstellt eine Artefakt-Datei (z.B. mit touch), gibt den Artefaktnamen als Output aus und lädt das Artefakt hoch
+   - **Deploy-Job**: Deployt die Anwendung (hängt vom Build ab)  
+     Läuft auf `ubuntu-latest` und läuft nur, wenn das `deploy`-Output vom Setup-Job `true` ist. Lädt das Artefakt herunter, listet die Datei und simuliert das Deployment
+   - **Cleanup-Job**: Läuft immer am Ende, unabhängig vom Ergebnis der vorherigen Jobs  
+     Läuft auf `ubuntu-latest`, gibt eine Nachricht und die Ergebnisse der vorherigen Jobs aus
 
-2. **Configure job dependencies**: Set up proper job dependencies:
-   - Test jobs should depend on setup job
-   - Build job should depend on all test jobs
-   - Deploy job should depend on build job
-   - Add a cleanup job that always runs at the end
+2. **Konfiguriere Job-Abhängigkeiten**:
+   - Test-Jobs hängen vom Setup-Job ab
+   - Build-Job hängt von allen Test-Jobs ab
+   - Deploy-Job hängt vom Build-Job ab
+   - Cleanup-Job läuft immer am Ende
 
-3. **Add parallel execution**: Configure jobs to run in parallel where appropriate:
-   - Test jobs should run in parallel with each other
-   - Show different operating systems for some jobs
-   - Demonstrate job outputs and artifacts
+3. **Füge parallele Ausführung hinzu**:
+   - Test-Jobs laufen parallel
+   - Zeige verschiedene Betriebssysteme für einige Jobs
+   - Zeige Job-Outputs und Artefakte
 
-4. **Handle job failures**: Configure the workflow to:
-   - Continue with cleanup even if other jobs fail
-   - Show conditional deployment based on test results
-   - Use job outputs to pass data between jobs
+4. **Behandle Job-Fehler**:
+   - Cleanup läuft immer, auch bei Fehlern in anderen Jobs
+   - Zeige bedingtes Deployment basierend auf Testergebnissen
+   - Verwende Job-Outputs, um Daten zwischen Jobs zu übergeben
 
-## Key Concepts
-- Multiple job definitions in a single workflow
-- Job dependencies using `needs:`
-- Parallel vs sequential job execution
-- Job outputs using `outputs:`
-- Job matrices for running on multiple OS/versions
-- Conditional job execution
-- `always()` job status function
+## Wichtige Konzepte
+- Mehrere Job-Definitionen in einem Workflow
+- Job-Abhängigkeiten mit `needs:`
+- Parallele vs. sequentielle Ausführung
+- Job-Outputs mit `outputs:`
+- Job-Matrix für mehrere OS/Versionen
+- Bedingte Job-Ausführung
+- `always()`-Funktion für Job-Status
 
-## Expected Behavior
+## Erwartetes Verhalten
 ```
-Setup Job (runs first)
+Setup Job (läuft zuerst)
       ↓
-┌─- Tests ──┐
-|           | (run in parallel)
-└─ Linting -┘
+┌── Tests ──┐
+|           | (laufen parallel)
+└── Linting ┘
       ↓
-Build Job (waits for all tests)
+Build Job (wartet auf alle Tests)
       ↓
-Deploy Job (waits for build)
+Deploy Job (wartet auf Build)
       ↓
-Cleanup Job (always runs)
+Cleanup Job (läuft immer)
 ```
 
-## Advanced Features
-- Job matrices to test multiple environments
-- Uploading and downloading artifacts between jobs
-- Setting job outputs and using them in dependent jobs
+## Erweiterte Features
+- Job-Matrix für mehrere Umgebungen
+- Artefakte zwischen Jobs hoch- und herunterladen
+- Setzen und Verwenden von Job-Outputs
+- Bedingtes Deployment je nach Branch
 
-## Hints
-- Use `needs: [ job1, job2 ]` for multiple dependencies
-- Use `strategy.matrix` for running jobs with multiple configurations
-- Job outputs: `outputs.key: ${{ steps.step-id.outputs.value }}`
-- Access job outputs: `needs.job-name.outputs.output-name`
-- Use `if: always()` for cleanup jobs
-- Use different `runs-on` values to show OS diversity
-- Use [`actions/upload-artifact@v4`](https://github.com/actions/upload-artifact/tree/v4) and [`actions/download-artifact@v4`](https://github.com/actions/download-artifact/tree/v4) for handling artifacts
+## Hinweise
+- Verwende `needs: [ job1, job2 ]` für mehrere Abhängigkeiten
+- Verwende `strategy.matrix` für mehrere Konfigurationen
+- Job-Outputs: `outputs.key: ${{ steps.step-id.outputs.value }}`
+- Zugriff auf Job-Outputs: `needs.job-name.outputs.output-name`
+- Verwende `if: always()` für Cleanup-Jobs
+- Verschiedene `runs-on`-Werte für OS-Vielfalt
+- Nutze [`actions/upload-artifact@v4`](https://github.com/actions/upload-artifact/tree/v4) und [`actions/download-artifact@v4`](https://github.com/actions/download-artifact/tree/v4) für Artefakte
 
-## Running the Workflow
-- Run the workflow on the `main` branch to see the deployment happen.
-- Create a new branch and run the workflow for this branch to see the deployment skipped.
-- Want to simulate a failure in one of the jobs? - Add inputs (`fail-setup`, `fail-build`, `fail-tests`, `fail-linting`, `fail-deploy`; type: `boolean`, default: `false`) to the workflow and use them to conditionally fail the jobs to see different behaviors.
-  - What happens if you fail the linting process? - Ask your instructor to explain.
+## Workflow ausführen
+- Starte den Workflow auf dem `main`-Branch, um das Deployment zu sehen
+- Erstelle einen neuen Branch und starte den Workflow, um zu sehen, dass das Deployment übersprungen wird
+- Fehler simulieren? – Füge Inputs (`fail-setup`, `fail-build`, `fail-tests`, `fail-linting`, `fail-deploy`; Typ: `boolean`, Standard: `false`) hinzu und lasse Jobs gezielt fehlschlagen, um das Verhalten zu testen
+  - Was passiert, wenn das Linting fehlschlägt? – Frage deinen Dozenten!
 
-## Solution
-If you get stuck, check the [solution](../../solutions/06-multiple-jobs/) directory for working examples.
+## Lösung
+Wenn du nicht weiterkommst, sieh im [solution](../../solutions/07-multiple-jobs/) Verzeichnis nach funktionierenden Beispielen nach.

@@ -1,31 +1,31 @@
-# Solution: Issue Trigger
+# Lösung: Issue-Trigger
 
-This directory contains the solution for Exercise 4: Issue Trigger.
+Dieses Verzeichnis enthält die Lösung für Übung 4: Issue-Trigger.
 
-## Files
-- `hello-world.yml` - The GitHub Actions workflow file with multiple triggers
+## Dateien
+- `hello-world.yml` – Die GitHub Actions Workflow-Datei mit mehreren Triggern
 
-## Key Features
-- Multiple trigger types (manual and issues)
-- Issue context access
-- Safe handling of context and input data
+## Wichtige Merkmale
+- Mehrere Trigger-Typen (manuell und Issues)
+- Zugriff auf Issue-Kontext
+- Sichere Verarbeitung von Kontext- und Eingabedaten
 
-## Triggers
-- `workflow_dispatch` - Manual trigger with inputs
-- `issues` (opened) - Automatic trigger when issues are opened
+## Trigger
+- `workflow_dispatch` – Manueller Trigger mit Inputs
+- `issues` (opened) – Automatischer Trigger, wenn Issues geöffnet werden
 
-## Security Considerations
-- Context and input data should be treated as untrusted (allowing for potential malicious content and script injection)
-- Use environment variables to safely handle context and input data
-- Avoid executing issue content directly as code
+## Sicherheitshinweis
+- Kontext- und Eingabedaten sollten als nicht vertrauenswürdig behandelt werden (potenziell bösartiger Inhalt und Skript-Injektion möglich)
+- Verwende Umgebungsvariablen, um Kontext- und Eingabedaten sicher zu verarbeiten
+- Vermeide es, Issue-Inhalte direkt als Code auszuführen
 
-## Usage
-1. Copy the workflow file to `.github/workflows/` in your repository
-2. Commit and push the changes
-3. Test both trigger methods:
-   - Create a new issue to see automatic trigger
+## Verwendung
+1. Kopiere die Workflow-Datei nach `.github/workflows/` in deinem Repository
+2. Committe und pushe die Änderungen
+3. Teste beide Trigger-Methoden:
+   - Erstelle ein neues Issue, um den automatischen Trigger zu testen
 
-## What You'll Learn
-- Multiple trigger configuration
-- Issue event handling
-- Security best practices
+## Was du lernst
+- Konfiguration mehrerer Trigger
+- Verarbeitung von Issue-Events
+- Sicherheitsbest Practices

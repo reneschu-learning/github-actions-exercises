@@ -1,33 +1,33 @@
-# Exercise 1: Hello World
+# Übung 1: Hallo Welt
 
-## Objective
-Create a simple GitHub Actions workflow that prints "Hello, World!" to the console when triggered manually.
+## Ziel
+Erstelle einen einfachen GitHub Actions Workflow, der „Hello, World!“ in der Konsole ausgibt, wenn er manuell ausgelöst wird.
 
-## Instructions
+## Anleitung
 
-1. **Create a workflow file**: In your repository, create a new file at `.github/workflows/hello-world.yml`
+1. **Erstelle eine Workflow-Datei**: Lege in deinem Repository eine neue Datei unter `.github/workflows/hello-world.yml` an.
 
-2. **Define the workflow**: Create a workflow with the following requirements:
-   - Name: "Hello World"
-   - Trigger: Manual trigger using `workflow_dispatch`
-   - Job: A single job named "hello" that runs on `ubuntu-latest`
-   - Step: A single step that prints "Hello, World!" to the console
+2. **Definiere den Workflow**: Erstelle einen Workflow mit folgenden Anforderungen:
+   - Name: „Hello World“
+   - Auslöser: Manueller Auslöser mit `workflow_dispatch`
+   - Job: Ein einzelner Job namens „hello“, der auf `ubuntu-latest` läuft
+   - Schritt: Ein einzelner Schritt, der „Hello, World!“ in die Konsole ausgibt
 
-3. **Test the workflow**: Commit and push your changes, then manually trigger the workflow from the GitHub Actions tab
+3. **Teste den Workflow**: Committe und pushe deine Änderungen und löse dann den Workflow manuell im GitHub Actions Tab aus.
 
-## Key Concepts
-- Basic GitHub Actions workflow structure
-- Manual workflow triggers (`workflow_dispatch`)
-- Jobs and steps
-- Using `echo` command in workflow steps
+## Wichtige Konzepte
+- Grundstruktur eines GitHub Actions Workflows
+- Manuelle Workflow-Auslöser (`workflow_dispatch`)
+- Jobs und Schritte
+- Verwendung des `echo`-Befehls in Workflow-Schritten
 
-## Expected Output
-When you run the workflow, you should see "Hello, World!" printed in the workflow logs.
+## Erwartete Ausgabe
+Wenn du den Workflow ausführst, solltest du „Hello, World!“ in den Workflow-Logs sehen.
 
-## Hints
-- Use the `run` keyword to execute shell commands
-- The basic structure of a workflow includes `name`, `on`, `jobs`, and within jobs: `runs-on` and `steps`
-- Each step can have a `name` and either `run` or `uses`
+## Hinweise
+- Verwende das Schlüsselwort `run`, um Shell-Befehle auszuführen
+- Die Grundstruktur eines Workflows umfasst `name`, `on`, `jobs` und innerhalb der Jobs: `runs-on` und `steps`
+- Jeder Schritt kann einen `name` und entweder `run` oder `uses` haben
 
-## Solution
-If you get stuck, check the [solution](../../solutions/01-hello-world/) directory for a working example.
+## Lösung
+Wenn du nicht weiterkommst, sieh im [solution](../../solutions/01-hello-world/) Verzeichnis nach einem funktionierenden Beispiel nach.
