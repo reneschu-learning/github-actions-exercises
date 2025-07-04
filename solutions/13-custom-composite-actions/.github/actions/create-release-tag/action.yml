@@ -1,0 +1,135 @@
+name: 'Create Release Tag'
+description: 'Creates a Git tag for release deployments using the GitHub API'
+author: 'GitHub Actions Learning'
+
+inputs:
+  tag-name:
+    description: 'The name of the tag to create (e.g., v1.0.0)'
+    required: true
+  commit-sha:
+    description: 'The commit SHA to tag'
+    required: true
+  tag-message:
+    description: 'Custom message for the tag'
+    required: false
+    default: 'Release tag created by GitHub Actions'
+  github-token:
+    description: 'GitHub token for API access'
+    required: true
+
+outputs:
+  tag-sha:
+    description: 'The SHA of the created tag object'
+    value: ${{ steps.create-tag.outputs.tag-sha }}
+  tag-url:
+    description: 'The URL of the created tag'
+    value: ${{ steps.create-tag.outputs.tag-url }}
+
+runs:
+  using: 'composite'
+  steps:
+    - name: 🔍 Validate Inputs
+      shell: bash
+      run: |
+        echo "🔍 Validating inputs..."
+        
+        if [ -z "${{ inputs.tag-name }}" ]; then
+          echo "❌ Error: tag-name is required"
+          exit 1
+        fi
+        
+        if [ -z "${{ inputs.commit-sha }}" ]; then
+          echo "❌ Error: commit-sha is required"
+          exit 1
+        fi
+        
+        if [ -z "${{ inputs.github-token }}" ]; then
+          echo "❌ Error: github-token is required"
+          exit 1
+        fi
+        
+        echo "✅ All inputs validated successfully"
+        echo "🏷️ Tag name: ${{ inputs.tag-name }}"
+        echo "📌 Commit SHA: ${{ inputs.commit-sha }}"
+        echo "💬 Tag message: ${{ inputs.tag-message }}"
+
+    - name: 🏷️ Create Release Tag
+      id: create-tag
+      shell: bash
+      run: |
+        echo "🏷️ Creating release tag: ${{ inputs.tag-name }}"
+        
+        # Create the tag object using GitHub REST API
+        echo "📝 Creating tag object..."
+        create_tag_response=$(curl -s -w "%{http_code}" \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ inputs.github-token }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/${{ github.repository }}/git/tags \
+          -d @- <<EOF
+        {
+          "tag": "${{ inputs.tag-name }}",
+          "message": "${{ inputs.tag-message }}",
+          "object": "${{ inputs.commit-sha }}",
+          "type": "commit",
+          "tagger": {
+            "name": "GitHub Actions",
+            "email": "actions@github.com",
+            "date": "$(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          }
+        }
+        EOF)
+        
+        # Extract HTTP status code and response body
+        http_code="${create_tag_response: -3}"
+        response_body="${create_tag_response%???}"
+        
+        if [ "$http_code" -ne 201 ]; then
+          echo "❌ Failed to create tag object. HTTP status: $http_code"
+          echo "Response: $response_body"
+          exit 1
+        fi
+        
+        # Extract tag SHA from response
+        TAG_SHA=$(echo "$response_body" | grep '"sha":' | head -n 1 | cut -d '"' -f4)
+        
+        if [ -z "$TAG_SHA" ]; then
+          echo "❌ Failed to extract tag SHA from response"
+          echo "Response: $response_body"
+          exit 1
+        fi
+        
+        echo "📌 Tag object SHA: $TAG_SHA"
+        
+        # Create the tag reference
+        echo "🔗 Creating tag reference..."
+        create_ref_response=$(curl -s -w "%{http_code}" \
+          -X POST \
+          -H "Accept: application/vnd.github+json" \
+          -H "Authorization: Bearer ${{ inputs.github-token }}" \
+          -H "X-GitHub-Api-Version: 2022-11-28" \
+          https://api.github.com/repos/${{ github.repository }}/git/refs \
+          -d @- <<EOF
+        {
+          "ref": "refs/tags/${{ inputs.tag-name }}",
+          "sha": "$TAG_SHA"
+        }
+        EOF)
+        
+        # Extract HTTP status code for reference creation
+        ref_http_code="${create_ref_response: -3}"
+        ref_response_body="${create_ref_response%???}"
+        
+        if [ "$ref_http_code" -ne 201 ]; then
+          echo "❌ Failed to create tag reference. HTTP status: $ref_http_code"
+          echo "Response: $ref_response_body"
+          exit 1
+        fi
+        
+        # Set outputs
+        echo "tag-sha=$TAG_SHA" >> $GITHUB_OUTPUT
+        echo "tag-url=https://github.com/${{ github.repository }}/releases/tag/${{ inputs.tag-name }}" >> $GITHUB_OUTPUT
+        
+        echo "✅ Release tag ${{ inputs.tag-name }} created successfully"
+        echo "🔗 Tag URL: https://github.com/${{ github.repository }}/releases/tag/${{ inputs.tag-name }}"

@@ -1,0 +1,160 @@
+name: Advanced Composite Action Examples
+
+on:
+  workflow_dispatch:
+    inputs:
+      example-type:
+        description: 'Which example to run'
+        required: true
+        type: choice
+        options:
+          - basic-tag
+          - version-tag
+          - pre-release-tag
+          - error-handling
+
+permissions:
+  contents: write
+
+jobs:
+  basic-tag-example:
+    name: 📝 Basic Tag Example
+    if: github.event.inputs.example-type == 'basic-tag'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🏷️ Create Basic Tag
+        uses: ./.github/actions/create-release-tag
+        with:
+          tag-name: 'basic-example-${{ github.run_number }}'
+          commit-sha: ${{ github.sha }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  version-tag-example:
+    name: 📦 Version Tag Example
+    if: github.event.inputs.example-type == 'version-tag'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 📦 Generate Version
+        id: version
+        run: |
+          # Simulate semantic versioning
+          major=1
+          minor=0
+          patch=${{ github.run_number }}
+          version="$major.$minor.$patch"
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "Generated version: $version"
+      
+      - name: 🏷️ Create Version Tag
+        id: tag
+        uses: ./.github/actions/create-release-tag
+        with:
+          tag-name: 'v${{ steps.version.outputs.version }}'
+          commit-sha: ${{ github.sha }}
+          tag-message: 'Release version ${{ steps.version.outputs.version }} - Automated release with new features and bug fixes'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 📊 Display Tag Information
+        run: |
+          echo "✅ Tag created successfully!"
+          echo "Tag Name: v${{ steps.version.outputs.version }}"
+          echo "Tag SHA: ${{ steps.tag.outputs.tag-sha }}"
+          echo "Tag URL: ${{ steps.tag.outputs.tag-url }}"
+
+  pre-release-tag-example:
+    name: 🧪 Pre-release Tag Example
+    if: github.event.inputs.example-type == 'pre-release-tag'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🧪 Generate Pre-release Version
+        id: prerelease
+        run: |
+          # Create pre-release version
+          version="1.0.0-beta.${{ github.run_number }}"
+          echo "version=$version" >> $GITHUB_OUTPUT
+          echo "Generated pre-release version: $version"
+      
+      - name: 🏷️ Create Pre-release Tag
+        uses: ./.github/actions/create-release-tag
+        with:
+          tag-name: 'v${{ steps.prerelease.outputs.version }}'
+          commit-sha: ${{ github.sha }}
+          tag-message: 'Pre-release v${{ steps.prerelease.outputs.version }} - Beta version for testing'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+
+  error-handling-example:
+    name: ❌ Error Handling Example
+    if: github.event.inputs.example-type == 'error-handling'
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🚫 Test Invalid Input (Expected to Fail)
+        id: invalid-tag
+        continue-on-error: true
+        uses: ./.github/actions/create-release-tag
+        with:
+          tag-name: ''  # Empty tag name should cause validation error
+          commit-sha: ${{ github.sha }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 📊 Check Error Handling
+        run: |
+          if [ "${{ steps.invalid-tag.outcome }}" == "failure" ]; then
+            echo "✅ Error handling working correctly - empty tag name was rejected"
+          else
+            echo "❌ Error handling failed - empty tag name should have been rejected"
+            exit 1
+          fi
+      
+      - name: 🚫 Test Invalid Commit SHA (Expected to Fail)
+        id: invalid-commit
+        continue-on-error: true
+        uses: ./.github/actions/create-release-tag
+        with:
+          tag-name: 'test-invalid-commit-${{ github.run_number }}'
+          commit-sha: 'invalid-sha-123'  # Invalid SHA should cause API error
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 📊 Check API Error Handling
+        run: |
+          if [ "${{ steps.invalid-commit.outcome }}" == "failure" ]; then
+            echo "✅ API error handling working correctly - invalid SHA was rejected"
+          else
+            echo "❌ API error handling failed - invalid SHA should have been rejected"
+            exit 1
+          fi
+      
+      - name: ✅ Test Valid Tag Creation
+        uses: ./.github/actions/create-release-tag
+        with:
+          tag-name: 'error-test-success-${{ github.run_number }}'
+          commit-sha: ${{ github.sha }}
+          tag-message: 'Valid tag created after error tests'
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 📋 Error Handling Summary
+        run: |
+          echo "## 🧪 Error Handling Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "| Test Case | Result |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|--------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Empty tag name validation | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| Invalid commit SHA handling | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "| Valid tag creation | ✅ Passed |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "**All error handling tests completed successfully!**" >> $GITHUB_STEP_SUMMARY

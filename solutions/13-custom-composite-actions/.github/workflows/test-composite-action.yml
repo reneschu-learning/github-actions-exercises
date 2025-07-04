@@ -1,0 +1,96 @@
+name: Test Composite Action
+
+on:
+  workflow_dispatch:
+    inputs:
+      tag-name:
+        description: 'Tag name to create (e.g., v1.0.0-test)'
+        required: true
+        default: 'v1.0.0-test'
+      commit-sha:
+        description: 'Commit SHA to tag (leave empty for current commit)'
+        required: false
+      tag-message:
+        description: 'Custom tag message'
+        required: false
+        default: 'Test tag created by composite action'
+
+permissions:
+  contents: write  # Required to create tags
+
+jobs:
+  test-composite-action:
+    name: 🧪 Test Create Release Tag Action
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: 📥 Checkout Repository
+        uses: actions/checkout@v4
+      
+      - name: 🔍 Determine Commit SHA
+        id: commit
+        run: |
+          if [ -n "${{ github.event.inputs.commit-sha }}" ]; then
+            echo "sha=${{ github.event.inputs.commit-sha }}" >> $GITHUB_OUTPUT
+            echo "Using provided commit SHA: ${{ github.event.inputs.commit-sha }}"
+          else
+            echo "sha=${{ github.sha }}" >> $GITHUB_OUTPUT
+            echo "Using current commit SHA: ${{ github.sha }}"
+          fi
+      
+      - name: 🏷️ Create Release Tag
+        id: create-tag
+        uses: ./.github/actions/create-release-tag
+        with:
+          tag-name: ${{ github.event.inputs.tag-name }}
+          commit-sha: ${{ steps.commit.outputs.sha }}
+          tag-message: ${{ github.event.inputs.tag-message }}
+          github-token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: 📊 Display Results
+        run: |
+          echo "🎉 Tag creation completed successfully!"
+          echo "Tag Name: ${{ github.event.inputs.tag-name }}"
+          echo "Tag SHA: ${{ steps.create-tag.outputs.tag-sha }}"
+          echo "Tag URL: ${{ steps.create-tag.outputs.tag-url }}"
+      
+      - name: 🔍 Verify Tag Creation
+        run: |
+          echo "🔍 Verifying tag was created..."
+          
+          # Use GitHub API to verify the tag exists
+          tag_info=$(curl -s \
+            -H "Accept: application/vnd.github+json" \
+            -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" \
+            -H "X-GitHub-Api-Version: 2022-11-28" \
+            https://api.github.com/repos/${{ github.repository }}/git/refs/tags/${{ github.event.inputs.tag-name }})
+          
+          if echo "$tag_info" | grep -q '"ref":'; then
+            echo "✅ Tag verification successful!"
+            echo "Tag details:"
+            echo "$tag_info" | jq '.'
+          else
+            echo "❌ Tag verification failed!"
+            echo "Response: $tag_info"
+            exit 1
+          fi
+      
+      - name: 📋 Test Summary
+        run: |
+          echo "## 🧪 Composite Action Test Results" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Input Parameters" >> $GITHUB_STEP_SUMMARY
+          echo "| Parameter | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|-----------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Tag Name | \`${{ github.event.inputs.tag-name }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Commit SHA | \`${{ steps.commit.outputs.sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tag Message | ${{ github.event.inputs.tag-message }} |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Action Outputs" >> $GITHUB_STEP_SUMMARY
+          echo "| Output | Value |" >> $GITHUB_STEP_SUMMARY
+          echo "|--------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "| Tag SHA | \`${{ steps.create-tag.outputs.tag-sha }}\` |" >> $GITHUB_STEP_SUMMARY
+          echo "| Tag URL | [${{ github.event.inputs.tag-name }}](${{ steps.create-tag.outputs.tag-url }}) |" >> $GITHUB_STEP_SUMMARY
+          echo "" >> $GITHUB_STEP_SUMMARY
+          echo "### Test Result" >> $GITHUB_STEP_SUMMARY
+          echo "✅ **Composite action test completed successfully!**" >> $GITHUB_STEP_SUMMARY
