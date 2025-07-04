@@ -59,7 +59,7 @@ To get started with the exercises, follow these steps:
 - [Exercise 13: Custom Composite Actions](./exercises/13-custom-composite-actions/README.md) ([Solution](./solutions/13-custom-composite-actions/))
   This exercise introduces you to creating custom composite actions, which is another way to make parts of your workflows reusable without introducing additional jobs. You will create a composite action that encapsulates the tagging step from the reusable workflow of exercise 12 and can be reused in multiple workflows. You will also learn how to use inputs and outputs in composite actions.
 - [Exercise 14: Accessing External Repositories](./exercises/14-accessing-external-repositories/README.md) ([Solution](./solutions/14-accessing-external-repositories/))
-  This exercise introduces you to accessing external repositories in your workflows. You will learn how to use the `actions/checkout` action to check out code from a different repository and how to use GitHub CLI to interact with issues from a different repository. You will also learn how to use GitHub Apps to set up permissions for accessing external repositories.
+  This exercise introduces you to accessing external repositories in your workflows using GitHub Apps. You will learn how to create a GitHub App with a private key, install it in an organization, store the private key as a secret, and use the `actions/create-github-app-token@v1` action to generate tokens for accessing external repositories. You will create a workflow that uses the GitHub App to create issues in different repositories.
 
 # Contributing
 If you would like to contribute to this repository, please follow these steps:
