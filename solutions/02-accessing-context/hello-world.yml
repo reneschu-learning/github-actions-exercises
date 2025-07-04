@@ -1,6 +1,6 @@
-name: Hello World with Context
+name: Hallo Welt mit Kontext
 
-run-name: ${{ github.actor }} triggered this workflow
+run-name: ${{ github.actor }} hat diesen Workflow ausgelöst
 
 on:
   workflow_dispatch:
@@ -9,9 +9,9 @@ jobs:
   hello:
     runs-on: ubuntu-latest
     steps:
-      - name: Print Hello World with Context
+      - name: Hallo Welt mit Kontext ausgeben
         run: |
-          echo "Hello, World!"
-          echo "Triggered by: ${{ github.actor }}"
+          echo "Hallo, Welt!"
+          echo "Ausgelöst von: ${{ github.actor }}"
           echo "Repository: ${{ github.repository }}"
-          echo "Reference: ${{ github.ref }}"
+          echo "Referenz: ${{ github.ref }}"

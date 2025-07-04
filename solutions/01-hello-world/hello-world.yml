@@ -1,4 +1,4 @@
-name: Hello World
+name: Hallo Welt
 
 on:
   workflow_dispatch:
@@ -7,5 +7,5 @@ jobs:
   hello:
     runs-on: ubuntu-latest
     steps:
-      - name: Print Hello World
-        run: echo "Hello, World!"
+      - name: Hallo Welt ausgeben
+        run: echo "Hallo, Welt!"

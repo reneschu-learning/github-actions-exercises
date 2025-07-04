@@ -1,17 +1,17 @@
-name: Hello World with Issue Trigger
+name: Hallo Welt mit Issue-Trigger
 
-run-name: ${{ github.actor }} triggered this workflow
+run-name: ${{ github.actor }} hat diesen Workflow ausgelöst
 
 on:
   workflow_dispatch:
     inputs:
       name:
-        description: 'Your name for personalized greeting'
+        description: 'Ihr Name für personalisierte Begrüßung'
         required: false
         default: 'World'
         type: string
       greeting:
-        description: 'Custom greeting message'
+        description: 'Benutzerdefinierte Begrüßungsnachricht'
         required: false
         default: 'Hello'
         type: string
@@ -22,24 +22,23 @@ jobs:
   hello:
     runs-on: ubuntu-latest
     steps:
-      - name: Print Personalized Greeting
+      - name: Personalisierte Begrüßung ausgeben
         run: |
           echo "$GREETING $NAME!"
-          echo "Triggered by: ${{ github.actor }}"
+          echo "Ausgelöst von: ${{ github.actor }}"
           echo "Repository: ${{ github.repository }}"
-          echo "Reference: $REF"
+          echo "Referenz: $REF"
         env:
           NAME: ${{ github.event.inputs.name }}
           GREETING: ${{ github.event.inputs.greeting }}
           REF: ${{ github.ref }}
-      
-      - name: Print Issue Information
+      - name: Issue-Informationen ausgeben
         run: |
-          echo "New issue opened!"
+          echo "Neues Issue geöffnet!"
           echo "Issue #${{ github.event.issue.number }}: $ISSUE_TITLE"
-          echo "Body: $ISSUE_BODY"
-          echo "Opened by: ${{ github.event.issue.user.login }}"
-          echo "Issue URL: ${{ github.event.issue.html_url }}"
+          echo "Inhalt: $ISSUE_BODY"
+          echo "Eröffnet von: ${{ github.event.issue.user.login }}"
+          echo "Issue-URL: ${{ github.event.issue.html_url }}"
         env:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}

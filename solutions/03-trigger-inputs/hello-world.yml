@@ -1,27 +1,27 @@
-name: Hello World with Inputs
+name: Hallo Welt mit Eingaben
 
-run-name: ${{ github.actor }} triggered this workflow
+run-name: ${{ github.actor }} hat diesen Workflow ausgelöst
 
 on:
   workflow_dispatch:
     inputs:
       name:
-        description: 'Your name for personalized greeting'
+        description: 'Ihr Name für personalisierte Begrüßung'
         required: true
         type: string
       greeting:
-        description: 'Custom greeting message'
+        description: 'Benutzerdefinierte Begrüßungsnachricht'
         required: false
-        default: 'Hello'
+        default: 'Hallo'
         type: string
 
 jobs:
   hello:
     runs-on: ubuntu-latest
     steps:
-      - name: Print Personalized Greeting
+      - name: Personalisierte Begrüßung ausgeben
         run: |
           echo "${{ github.event.inputs.greeting }} ${{ github.event.inputs.name }}!"
-          echo "Triggered by: ${{ github.actor }}"
+          echo "Ausgelöst von: ${{ github.actor }}"
           echo "Repository: ${{ github.repository }}"
-          echo "Reference: ${{ github.ref }}"
+          echo "Referenz: ${{ github.ref }}"

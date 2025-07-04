@@ -1,4 +1,4 @@
-name: Multi-Job CI/CD Pipeline
+name: Multi-Job CI/CD-Pipeline
 
 on:
   workflow_dispatch:
@@ -10,40 +10,40 @@ jobs:
       build-version: ${{ steps.version.outputs.version }}
       should-deploy: ${{ steps.check.outputs.deploy }}
     steps:
-      - name: Setup environment
+      - name: Umgebung einrichten
         run: |
-          echo "Setting up environment..."
-          echo "Node.js version: $(node --version)"
-          echo "npm version: $(npm --version)"
+          echo "Umgebung wird eingerichtet..."
+          echo "Node.js-Version: $(node --version)"
+          echo "npm-Version: $(npm --version)"
       
-      - name: Generate version
+      - name: Version generieren
         id: version
         run: |
           VERSION="1.0.${{ github.run_number }}"
           echo "version=$VERSION" >> $GITHUB_OUTPUT
-          echo "Generated version: $VERSION"
+          echo "Generierte Version: $VERSION"
       
-      - name: Check deployment conditions
+      - name: Deployment-Bedingungen prüfen
         id: check
         run: |
           if [[ "${{ github.ref }}" == "refs/heads/main" ]]; then
             echo "deploy=true" >> $GITHUB_OUTPUT
-            echo "Deployment: Enabled"
+            echo "Deployment: Aktiviert"
           else
             echo "deploy=false" >> $GITHUB_OUTPUT
-            echo "Deployment: Disabled"
+            echo "Deployment: Deaktiviert"
           fi
 
   tests:
     needs: setup
     runs-on: ubuntu-latest
     steps:
-      - name: Run tests
+      - name: Tests ausführen
         run: |
-          echo "Running tests..."
-          # Simulate test execution
+          echo "Tests werden ausgeführt..."
+          # Testausführung simulieren
           sleep 10
-          echo "✅ Tests passed"
+          echo "✅ Tests bestanden"
 
   linting:
     needs: setup
@@ -52,12 +52,12 @@ jobs:
         os: [ ubuntu-latest, windows-latest ]
     runs-on: ${{ matrix.os }}
     steps:
-      - name: Run linting
+      - name: Linting ausführen
         run: |
-          echo "Running linting on ${{ matrix.os }}..."
-          # Simulate linting
+          echo "Linting läuft auf ${{ matrix.os }}..."
+          # Linting simulieren
           sleep 5
-          echo "✅ Linting passed"
+          echo "✅ Linting bestanden"
 
   build:
     needs: [ setup, tests, linting ]
@@ -65,18 +65,18 @@ jobs:
     outputs:
       artifact-name: ${{ steps.build.outputs.artifact }}
     steps:
-      - name: Build application
+      - name: Anwendung bauen
         id: build
         run: |
-          echo "Building application version ${{ needs.setup.outputs.build-version }}..."
-          # Simulate build process
+          echo "Anwendungsversion ${{ needs.setup.outputs.build-version }} wird gebaut..."
+          # Build-Prozess simulieren
           sleep 20
           ARTIFACT="app-${{ needs.setup.outputs.build-version }}.tar.gz"
-          touch $ARTIFACT  # Create a dummy artifact file
+          touch $ARTIFACT  # Dummy-Artefaktdatei erstellen
           echo "artifact=$ARTIFACT" >> $GITHUB_OUTPUT
-          echo "✅ Build completed: $ARTIFACT"
+          echo "✅ Build abgeschlossen: $ARTIFACT"
       
-      - name: Upload build artifact
+      - name: Build-Artefakt hochladen
         uses: actions/upload-artifact@v4
         with:
           name: app
@@ -87,31 +87,31 @@ jobs:
     if: needs.setup.outputs.should-deploy == 'true'
     runs-on: ubuntu-latest
     steps:
-      - name: Download build artifact
+      - name: Build-Artefakt herunterladen
         uses: actions/download-artifact@v4
         with:
           name: app
 
-      - name: Deploy to production
+      - name: Deployment in Produktion
         run: |
-          echo "Deploying ${{ needs.build.outputs.artifact-name }} to production..."
+          echo "Deployment von ${{ needs.build.outputs.artifact-name }} nach Produktion..."
           echo "Version: ${{ needs.setup.outputs.build-version }}"
-          ls ${{ github.workspace }} # List downloaded artifact
-          # Simulate deployment
+          ls ${{ github.workspace }} # Heruntergeladenes Artefakt auflisten
+          # Deployment simulieren
           sleep 10
-          echo "✅ Deployment completed successfully"
+          echo "✅ Deployment erfolgreich abgeschlossen"
 
   cleanup:
     needs: [ setup, tests, linting, build, deploy ]
     if: always()
     runs-on: ubuntu-latest
     steps:
-      - name: Cleanup resources
+      - name: Ressourcen bereinigen
         run: |
-          echo "Cleaning up resources..."
-          echo "Setup status: ${{ needs.setup.result }}"
-          echo "Tests status: ${{ needs.tests.result }}"
-          echo "Linting status: ${{ needs.linting.result }}"
-          echo "Build status: ${{ needs.build.result }}"
-          echo "Deploy status: ${{ needs.deploy.result }}"
-          echo "✅ Cleanup completed"
+          echo "Ressourcen werden bereinigt..."
+          echo "Setup-Status: ${{ needs.setup.result }}"
+          echo "Tests-Status: ${{ needs.tests.result }}"
+          echo "Linting-Status: ${{ needs.linting.result }}"
+          echo "Build-Status: ${{ needs.build.result }}"
+          echo "Deploy-Status: ${{ needs.deploy.result }}"
+          echo "✅ Bereinigung abgeschlossen"

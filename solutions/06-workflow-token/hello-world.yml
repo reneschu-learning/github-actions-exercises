@@ -1,24 +1,24 @@
-name: Hello World with Workflow Token
+name: Hallo Welt mit Workflow-Token
 
-run-name: '${{ (github.event.issue && format(''Issue #{0}'', github.event.issue.number)) || (github.event.schedule && ''Cron'') || github.actor }} triggered this workflow'
+run-name: '${{ (github.event.issue && format(''Issue #{0}'', github.event.issue.number)) || (github.event.schedule && ''Cron'') || github.actor }} hat diesen Workflow ausgelöst'
 
 on:
   workflow_dispatch:
     inputs:
       name:
-        description: 'Your name for personalized greeting'
+        description: 'Ihr Name für personalisierte Begrüßung'
         required: false
         default: 'World'
         type: string
       greeting:
-        description: 'Custom greeting message'
+        description: 'Benutzerdefinierte Begrüßungsnachricht'
         required: false
         default: 'Hello'
         type: string
   issues:
     types: [opened]
   schedule:
-    - cron: '0 9 * * *'  # Daily at 9:00 AM UTC
+    - cron: '0 9 * * *'  # Täglich um 9:00 Uhr UTC
 
 permissions:
   contents: read
@@ -29,20 +29,20 @@ jobs:
   hello:
     runs-on: ubuntu-latest
     steps:
-      - name: Verify GitHub CLI Authentication
+      - name: GitHub CLI-Authentifizierung prüfen
         run: |
-          echo "Checking GitHub CLI authentication..."
+          echo "GitHub CLI-Authentifizierung wird geprüft..."
           gh auth status
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Print Personalized Greeting
+      - name: Personalisierte Begrüßung ausgeben
         if: github.event_name == 'workflow_dispatch'
         run: |
           echo "$GREETING $NAME!"
-          echo "Triggered by: ${{ github.actor }}"
+          echo "Ausgelöst von: ${{ github.actor }}"
           echo "Repository: ${{ github.repository }}"
-          echo "Reference: $REF"
+          echo "Referenz: $REF"
           echo ""
         env:
           NAME: ${{ github.event.inputs.name }}
@@ -50,63 +50,63 @@ jobs:
           REF: ${{ github.ref }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Get Repository Information
+      - name: Repository-Informationen abrufen
         if: github.event_name == 'workflow_dispatch'
         run: |
-          echo "Repository Information:"
+          echo "Repository-Informationen:"
           gh repo view ${{ github.repository }} --json name,owner,description,isPrivate,defaultBranchRef | jq -r '
             "Name: " + .name,
             "Owner: " + .owner.login,  
-            "Description: " + (if .description != "" then .description else "No description" end),
-            "Private: " + (.isPrivate | tostring),
-            "Default branch: " + .defaultBranchRef.name
+            "Beschreibung: " + (if .description != "" then .description else "Keine Beschreibung" end),
+            "Privat: " + (.isPrivate | tostring),
+            "Standard-Branch: " + .defaultBranchRef.name
           '
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Print Issue Information
+      - name: Issue-Informationen ausgeben
         if: github.event_name == 'issues'
         run: |
-          echo "New issue opened!"
+          echo "Neues Issue geöffnet!"
           echo "Issue #${{ github.event.issue.number }}: $ISSUE_TITLE"
-          echo "Body: $ISSUE_BODY"
-          echo "Opened by: ${{ github.event.issue.user.login }}"
-          echo "Issue URL: ${{ github.event.issue.html_url }}"
+          echo "Inhalt: $ISSUE_BODY"
+          echo "Eröffnet von: ${{ github.event.issue.user.login }}"
+          echo "Issue-URL: ${{ github.event.issue.html_url }}"
           echo ""
         env:
           ISSUE_TITLE: ${{ github.event.issue.title }}
           ISSUE_BODY: ${{ github.event.issue.body }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Comment on Issue
+      - name: Kommentar zum Issue hinzufügen
         if: github.event_name == 'issues'
         run: |
-          gh issue comment ${{ github.event.issue.number }} -R ${{ github.repository }} --body "👋 Hello! This issue was automatically detected by our workflow. We'll review it shortly.
+          gh issue comment ${{ github.event.issue.number }} -R ${{ github.repository }} --body "👋 Hallo! Dieses Issue wurde automatisch von unserem Workflow erkannt. Wir werden es in Kürze prüfen.
 
-          **Issue Details:**
-          - **Title:** ${{ github.event.issue.title }}
-          - **Opened by:** ${{ github.event.issue.user.login }}
-          - **Workflow run:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
+          **Issue-Details:**
+          - **Titel:** ${{ github.event.issue.title }}
+          - **Eröffnet von:** ${{ github.event.issue.user.login }}
+          - **Workflow-Lauf:** ${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}
 
-          Thank you for reporting this issue!"
+          Vielen Dank für das Melden dieses Issues!"
           
-          echo "✓ Comment added to issue #${{ github.event.issue.number }}"
+          echo "✓ Kommentar zu Issue #${{ github.event.issue.number }} hinzugefügt"
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
       
-      - name: Print Daily Status Check
+      - name: Täglichen Status-Check ausgeben
         if: github.event_name == 'schedule'
         run: |
-          echo "Daily status check - All systems operational"
-          echo "Current time: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
+          echo "Täglicher Status-Check – Alle Systeme betriebsbereit"
+          echo "Aktuelle Zeit: $(date -u +%Y-%m-%dT%H:%M:%SZ)"
           echo ""
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: List Recent Workflow Runs
+      - name: Letzte Workflow-Läufe auflisten
         if: github.event_name == 'schedule'
         run: |
-          echo "Recent workflow runs:"
+          echo "Letzte Workflow-Läufe:"
           gh run list -R ${{ github.repository }} --limit 5 --json displayTitle,status,conclusion,headBranch | jq -r '.[] | 
             (if .conclusion == "success" then "✓" 
              elif .conclusion == "failure" then "✗" 

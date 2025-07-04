@@ -1,22 +1,22 @@
-name: External Repository Access
+name: Externer Repository-Zugriff
 
 on:
   workflow_dispatch:
     inputs:
       target_repo:
-        description: 'Target repository (owner/repo format)'
+        description: 'Ziel-Repository (Besitzer/Repo-Format)'
         required: true
         default: 'your-org/external-repo-test'
         type: string
       issue_title:
-        description: 'Title for the issue to create'
+        description: 'Titel für das zu erstellende Issue'
         required: true
-        default: 'Test issue from workflow'
+        default: 'Test-Issue von Workflow'
         type: string
       issue_body:
-        description: 'Body content for the issue'
+        description: 'Inhaltsbeschreibung für das Issue'
         required: true
-        default: 'This issue was created by a GitHub Actions workflow using a GitHub App token.'
+        default: 'Dieses Issue wurde von einem GitHub Actions-Workflow mit einem GitHub App-Token erstellt.'
         type: string
 
 jobs:
@@ -24,7 +24,7 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-      - name: Generate GitHub App Token
+      - name: GitHub App-Token generieren
         id: generate-token
         uses: actions/create-github-app-token@v1
         with:
@@ -32,24 +32,24 @@ jobs:
           private-key: ${{ secrets.APP_PRIVATE_KEY }}
           repositories: ${{ github.event.inputs.target_repo }}
       
-      - name: Create issue in external repository
+      - name: Issue im externen Repository erstellen
         id: create-issue
         env:
           GH_TOKEN: ${{ steps.generate-token.outputs.token }}
         run: |
-          echo "Creating issue in repository: ${{ github.event.inputs.target_repo }}"
-          echo "Issue title: ${{ github.event.inputs.issue_title }}"
+          echo "Issue wird im Repository erstellt: ${{ github.event.inputs.target_repo }}"
+          echo "Issue-Titel: ${{ github.event.inputs.issue_title }}"
           
-          # Create the issue and capture the output
+          # Issue erstellen und Ausgabe erfassen
           issue_url=$(gh issue create \
             --repo "${{ github.event.inputs.target_repo }}" \
             --title "${{ github.event.inputs.issue_title }}" \
             --body "${{ github.event.inputs.issue_body }}")
           
           if [ $? -eq 0 ] && [ -n "$issue_url" ]; then
-            echo "✅ Issue created successfully!"
+            echo "✅ Issue erfolgreich erstellt!"
             echo "issue_url=$issue_url" >> $GITHUB_OUTPUT
           else
-            echo "❌ Failed to create issue"
+            echo "❌ Issue konnte nicht erstellt werden"
             exit 1
           fi

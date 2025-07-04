@@ -1,16 +1,16 @@
-name: Azure Deployment with OIDC (with Cleanup)
+name: Azure Deployment mit OIDC (mit Aufräumen)
 
 on:
   workflow_dispatch:
     inputs:
       resource-group-name:
-        description: 'Name of the Azure Resource Group'
+        description: 'Name der Azure Ressourcengruppe'
         required: true
       storage-account-name:
-        description: 'Name of the Azure Storage Account'
+        description: 'Name des Azure Storage Accounts'
         required: true
       storage-container-name:
-        description: 'Name of the Azure Storage Container'
+        description: 'Name des Azure Storage Containers'
         required: true
 
 jobs:
@@ -18,23 +18,21 @@ jobs:
     runs-on: ubuntu-latest
     
     steps:
-    - name: Login to Azure
+    - name: Login bei Azure
       uses: azure/login@v2
       with:
         client-id: ${{ vars.AZURE_CLIENT_ID }}
         tenant-id: ${{ vars.AZURE_TENANT_ID }}
         subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
     
-    - name: Validate Azure connection
+    - name: Azure-Verbindung validieren
       run: |
-        echo "🔍 Validating Azure connection..."
+        echo "🔍 Azure-Verbindung wird validiert..."
         az account show
-        echo "✅ Successfully connected to Azure"
-    
-    - name: Create Resource Group
+        echo "✅ Erfolgreich mit Azure verbunden"
+    - name: Ressourcengruppe erstellen
       run: |
-        echo "🏗️ Creating resource group: ${{ github.event.inputs.resource-group-name }}"
-        
+        echo "🏗️ Ressourcengruppe wird erstellt: ${{ github.event.inputs.resource-group-name }}"
         az group create \
           --name ${{ github.event.inputs.resource-group-name }} \
           --location "West Europe" \
@@ -42,14 +40,12 @@ jobs:
                  createdBy=github-actions \
                  workflow="${{ github.workflow }}" \
                  runId="${{ github.run_id }}"
-        
-        echo "✅ Resource group created successfully"
-    
-    - name: Deploy Storage Account
+        echo "✅ Ressourcengruppe erfolgreich erstellt"
+    - name: Storage Account bereitstellen
       run: |
-        echo "💾 Deploying storage account..."
+        echo "💾 Storage Account wird bereitgestellt..."
                 
-        # Create storage account
+        # Storage Account erstellen
         az storage account create \
           --name ${{ github.event.inputs.storage-account-name }} \
           --resource-group ${{ github.event.inputs.resource-group-name }} \
@@ -64,84 +60,79 @@ jobs:
                  workflow="${{ github.workflow }}" \
                  runId="${{ github.run_id }}"
         
-        echo "✅ Storage account created successfully"
-    
-    - name: Create Storage Container
+        echo "✅ Storage Account erfolgreich erstellt"
+    - name: Storage Container erstellen
       run: |
-        echo "📁 Creating storage container..."
+        echo "📁 Storage Container wird erstellt..."
         
         az storage container create \
           --name ${{ github.event.inputs.storage-container-name }} \
           --account-name ${{ github.event.inputs.storage-account-name }}
         
-        echo "✅ Storage container created successfully"
-    
-    - name: Upload sample file
+        echo "✅ Storage Container erfolgreich erstellt"
+    - name: Beispieldatei hochladen
       run: |
-        echo "📄 Uploading sample file to storage..."
+        echo "📄 Beispieldatei wird in den Storage hochgeladen..."
         
-        # Create a sample file
-        echo "Hello from GitHub Actions! 
-        Deployment Details:
+        # Beispieldatei erstellen
+        echo "Hallo von GitHub Actions! 
+        Deployment-Details:
         - Environment: ${{ github.event.inputs.environment }}
         - Workflow: ${{ github.workflow }}
         - Run ID: ${{ github.run_id }}
-        - Timestamp: $(date)
+        - Zeitstempel: $(date)
         " > sample.txt
         
-        # Upload the file
+        # Datei hochladen
         az storage blob upload \
           --file sample.txt \
           --name "deployment-info.txt" \
           --container-name ${{ github.event.inputs.storage-container-name }} \
           --account-name ${{ github.event.inputs.storage-account-name }}
         
-        echo "✅ Sample file uploaded successfully"
-    
-    - name: Verify deployment
+        echo "✅ Beispieldatei erfolgreich hochgeladen"
+    - name: Deployment verifizieren
       run: |
-        echo "🔍 Verifying deployment..."
+        echo "🔍 Deployment wird verifiziert..."
         
-        # Check resource group
-        echo "Resource Group Details:"
+        # Ressourcengruppe prüfen
+        echo "Details der Ressourcengruppe:"
         az group show --name ${{ github.event.inputs.resource-group-name }} --output table
 
-        # Check storage account
-        echo -e "\nStorage Account Details:"
+        # Storage Account prüfen
+        echo -e "\nDetails des Storage Accounts:"
         az storage account show \
           --name ${{ github.event.inputs.storage-account-name }} \
           --resource-group ${{ github.event.inputs.resource-group-name }} \
           --output table
         
-        # List blobs in container
-        echo -e "\nFiles in storage container:"
+        # Blobs im Container auflisten
+        echo -e "\nDateien im Storage Container:"
         az storage blob list \
           --container-name ${{ github.event.inputs.storage-container-name }} \
           --account-name ${{ github.event.inputs.storage-account-name }} \
           --output table
         
-        echo "✅ Deployment verification completed"
+        echo "✅ Deployment-Überprüfung abgeschlossen"
 
 cleanup:
   runs-on: ubuntu-latest
   needs: deploy
-  # Create this environment and add yourself as a reviewer to get some time to review the resources before deletion
+  # Erstellen Sie diese Umgebung und fügen Sie sich selbst als Prüfer hinzu, um etwas Zeit zu haben, die Ressourcen vor der Löschung zu überprüfen
   environment: cleanup
   
   steps:
-  - name: Login to Azure
+  - name: Login bei Azure
     uses: azure/login@v2
     with:
       client-id: ${{ vars.AZURE_CLIENT_ID }}
       tenant-id: ${{ vars.AZURE_TENANT_ID }}
       subscription-id: ${{ vars.AZURE_SUBSCRIPTION_ID }}
   
-  - name: Delete Resource Group
+  - name: Ressourcengruppe löschen
     run: |
-      echo "🗑️ Deleting resource group: ${{ github.event.inputs.resource-group-name }}"
-      
+      echo "🗑️ Ressourcengruppe wird gelöscht: ${{ github.event.inputs.resource-group-name }}"
       az group delete \
         --name ${{ github.event.inputs.resource-group-name }} \
         --yes --no-wait
-      
-      echo "✅ Resource group deleted successfully"
+      echo "✅ Ressourcengruppe erfolgreich gelöscht"

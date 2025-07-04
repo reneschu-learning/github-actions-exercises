@@ -1,4 +1,4 @@
-name: Reusable Deployment
+name: Wiederverwendbares Deployment
 
 on:
   workflow_call:
@@ -27,7 +27,7 @@ on:
 
 jobs:
   deploy:
-    name: 🚀 Deploy to ${{ inputs.environment }}
+    name: "🚀 Deployment nach ${{ inputs.environment }}"
     runs-on: ubuntu-latest
     environment: 
       name: ${{ inputs.environment }}
@@ -36,52 +36,52 @@ jobs:
       status: ${{ steps.deploy.outputs.status }}
     
     steps:
-      - name: 📥 Download deployment package
+      - name: "📥 Deployment-Paket herunterladen"
         uses: actions/download-artifact@v4
         with:
           name: ${{ inputs.package-name }}
           path: ./deployment
       
-      - name: 🔍 Verify package contents
+      - name: "🔍 Paketinhalt prüfen"
         run: |
-          echo "📋 Deployment Package Contents:"
+          echo "📋 Inhalt des Deployment-Pakets:"
           ls -la ./deployment/
           echo ""
-          echo "📄 Build Information:"
+          echo "📄 Build-Informationen:"
           cat ./deployment/build-info.txt
       
-      - name: 🔧 Setup .NET (Production only)
+      - name: "🔧 .NET einrichten (nur Produktion)"
         if: inputs.is-production
         uses: actions/setup-dotnet@v4
         with:
           dotnet-version: '8.0.x'
       
-      - name: 🚀 Deploy to ${{ inputs.environment }}
+      - name: "🚀 Deployment nach ${{ inputs.environment }}"
         id: deploy
         run: |
-          echo "🌍 Deploying to ${{ inputs.environment }} Environment"
-          echo "Package location: ./deployment/"
-          echo "Target URL: ${{ inputs.app-url }}"
+          echo "🌍 Deployment ins ${{ inputs.environment }}-Environment"
+          echo "Paketpfad: ./deployment/"
+          echo "Ziel-URL: ${{ inputs.app-url }}"
           
-          # Run production-specific deployment steps
+          # Produktionsspezifische Deployment-Schritte ausführen
           if [ "${{ inputs.is-production }}" == "true" ]; then
-            # Simulate deployment by running the application
-            echo "🚀 Running the application..."
+            # Deployment simulieren durch Ausführen der Anwendung
+            echo "🚀 Anwendung wird ausgeführt..."
             chmod +x ./deployment/SampleApp
             ./deployment/SampleApp
           fi
           
           echo "status=success" >> $GITHUB_OUTPUT
-          echo "✅ Deployment completed successfully"
+          echo "✅ Deployment erfolgreich abgeschlossen"
       
-      - name: 🏷️ Create Release Tag (Production only)
+      - name: "🏷️ Release-Tag erstellen (nur Produktion)"
         if: inputs.is-production
         run: |
-          echo "Creating release tag for production deployment"
+          echo "Release-Tag für Produktionsdeployment wird erstellt"
           echo "Tag: v1.0.${{ github.run_number }}"
           echo "Commit: ${{ github.sha }}"
 
-          # Use the GitHub REST API to create a tag
+          # GitHub REST API zum Erstellen eines Tags verwenden
           create_tag_response=$(curl -s -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \
@@ -91,7 +91,7 @@ jobs:
             -d @- <<EOF
           {
             "tag": "v1.0.${{ github.run_number }}",
-            "message": "Tag created by deployment",
+            "message": "Tag erstellt durch Deployment",
             "object": "${{ github.sha }}",
             "type": "commit",
             "tagger": {
@@ -102,9 +102,9 @@ jobs:
           }
           EOF)
           TAG_SHA=$(echo "$create_tag_response" | grep '"sha":' | head -n 1 | cut -d '"' -f4)
-          echo "Tag object SHA: $TAG_SHA"
+          echo "Tag-Objekt SHA: $TAG_SHA"
           
-          # Create the tag reference
+          # Tag-Referenz erstellen
           curl -s -L \
             -X POST \
             -H "Accept: application/vnd.github+json" \
@@ -118,16 +118,16 @@ jobs:
             "sha": "$TAG_SHA"
           }
           EOF
-          echo "🏷️ Release tag v1.0.${{ github.run_number }} created successfully"
+          echo "🏷️ Release-Tag v1.0.${{ github.run_number }} erfolgreich erstellt"
       
-      - name: 🔗 Deployment Summary
+      - name: "🔗 Deployment-Zusammenfassung"
         run: |
-          echo "## 🚀 Deployment Summary" >> $GITHUB_STEP_SUMMARY
-          echo "| Field | Value |" >> $GITHUB_STEP_SUMMARY
-          echo "|-------|-------|" >> $GITHUB_STEP_SUMMARY
+          echo "## 🚀 Deployment-Zusammenfassung" >> $GITHUB_STEP_SUMMARY
+          echo "| Feld | Wert |" >> $GITHUB_STEP_SUMMARY
+          echo "|------|------|" >> $GITHUB_STEP_SUMMARY
           echo "| Environment | ${{ inputs.environment }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Commit | ${{ github.sha }} |" >> $GITHUB_STEP_SUMMARY
           echo "| Branch | ${{ github.ref_name }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Actor | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Target URL | ${{ inputs.app-url }} |" >> $GITHUB_STEP_SUMMARY
-          echo "| Status | ✅ Success |" >> $GITHUB_STEP_SUMMARY
+          echo "| Akteur | ${{ github.actor }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Ziel-URL | ${{ inputs.app-url }} |" >> $GITHUB_STEP_SUMMARY
+          echo "| Status | ✅ Erfolg |" >> $GITHUB_STEP_SUMMARY
